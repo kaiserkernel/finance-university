@@ -80,9 +80,6 @@ export default function CommentDialog({
 	onRemove,
 	openCommentRole
 }: Props) {
-
-	console.log(row.comment, "comments");
-
 	let showRoleList = [
 		"reviewer_1",
 		"reviewer_2",
