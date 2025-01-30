@@ -8,6 +8,7 @@ import {
 	Box,
 	LinearProgress,
 	TextField,
+	Popover
 } from "@mui/material";
 
 import { CloudUpload, Publish } from "@mui/icons-material";
@@ -43,7 +44,7 @@ export default function ApplySection() {
 		budget: "",
 		milestone: "",
 	});
-	// const [budgetLimitation, setLimit] = React.useState(10000);
+	const [budgetLimitation, setBudgetLimitation] = React.useState(0);
 	const [currencyType, setCurrencyType] = React.useState<{
 		value: string;
 		label: string;
@@ -51,6 +52,13 @@ export default function ApplySection() {
 		value: "birr",
 		label: "Birr",
 	});
+	const [budgetAlertEl, setBugetAlertEl] = React.useState<null | HTMLElement>(null);
+	const openBudgetAlert = React.useMemo(() => {
+		return Boolean(budgetAlertEl)
+	}, [budgetAlertEl])
+	const openBudgetAlertId = React.useMemo(() => {
+		return openBudgetAlert ? 'simple-popover' : undefined
+	}, [openBudgetAlert])
 
 	const params = useParams();
 
@@ -61,10 +69,11 @@ export default function ApplySection() {
 					console.log(res, 'apply initial value')
 					setBudget({
 						milestone: res.data.stage + 1
-					})
+					});
+					setBudgetLimitation(res.data.budget);
 				})
 				.catch(() => {
-					// setLimit(10000);
+					// setBudgetLimitation(10000);
 				});
 		}
 	}, []);
@@ -134,16 +143,23 @@ export default function ApplySection() {
 		setLoading(false);
 	}, [file]);
 
-	// const handleBudgetChange = (
-	// 	e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
-	// ) => {
-	// 	if (Number(e.target.value) <= budgetLimitation) {
-	// 		setBudget((pre: any) => ({
-	// 			...pre,
-	// 			budget: e.target.value,
-	// 		}));
-	// 	}
-	// };
+	const handleBudgetChange = (
+		e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+	) => {
+		if (Number(e.target.value) <= budgetLimitation) {
+			setBudget((pre: any) => ({
+				...pre,
+				budget: e.target.value,
+			}));
+			setBugetAlertEl(null);
+		} else {
+			setBugetAlertEl(e.currentTarget);
+		}
+	};
+
+	const handleCloseBudgetLimitAlert = () => {
+		setBugetAlertEl(null);
+	}
 
 	return (
 		<DashboardContent maxWidth="xl">
@@ -174,11 +190,27 @@ export default function ApplySection() {
 									fullWidth
 									type="number"
 									value={budget.budget}
-									onChange={(e) => setBudget((prev: any) => ({
-										...prev,
-										budget: e.target.value
-									}))}
+									// onChange={(e) => setBudget((prev: any) => ({
+									// 	...prev,
+									// 	budget: e.target.value
+									// }))}
+									onChange={handleBudgetChange}
+									aria-describedby={openBudgetAlertId}
 								></TextField>
+								<Popover
+									id={openBudgetAlertId}
+									open={openBudgetAlert}
+									anchorEl={budgetAlertEl}
+									onClose={handleCloseBudgetLimitAlert}
+									anchorOrigin={{
+										vertical: 'top',
+										horizontal: 'left',
+									}}
+								>
+									<Typography color={'error'}>
+										Budget limited : {budgetLimitation}
+									</Typography>
+								</Popover>
 							</Grid>
 							<Grid size={5}>
 								<Autocomplete
