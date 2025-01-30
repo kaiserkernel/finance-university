@@ -52,6 +52,7 @@ export default function RequestTable({ }: Props) {
   const notFound = !dataFiltered.length && !!filterName;
 
   const handleAccept = (id: string) => {
+    console.log(id, 'accept test')
     approveRequest(id)
       .then((_) => {
         toast.success("Application approved");
