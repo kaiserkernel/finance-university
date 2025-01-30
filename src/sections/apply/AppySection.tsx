@@ -203,11 +203,11 @@ export default function ApplySection() {
 									anchorEl={budgetAlertEl}
 									onClose={handleCloseBudgetLimitAlert}
 									anchorOrigin={{
-										vertical: 'top',
+										vertical: 'bottom',
 										horizontal: 'left',
 									}}
 								>
-									<Typography color={'error'}>
+									<Typography color={'error'} sx={{ p: 2 }}>
 										Budget limited : {budgetLimitation}
 									</Typography>
 								</Popover>
