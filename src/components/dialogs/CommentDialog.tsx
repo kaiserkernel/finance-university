@@ -85,18 +85,21 @@ export default function CommentDialog({
 		"reviewer_2",
 		"grant_dep",
 		"grant_dir",
-		"col_dean"
+		"col_dean",
+		"finance"
 	]
 
 	if (openCommentRole === 'grant_dep') {
 		showRoleList = [
-			'col_dean'
+			'col_dean',
+			'finance'
 		]
 	}
 
 	if (openCommentRole === 'grant_dir') {
 		showRoleList = [
-			'grant_dep'
+			'grant_dep',
+			'finance'
 		]
 	}
 
