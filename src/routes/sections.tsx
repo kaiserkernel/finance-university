@@ -53,7 +53,8 @@ export function Router() {
         </DashboardLayout>
       ),
       children: [
-        { element: <PrivatePage component={HomePage} />, index: true },
+        // { element: <PrivatePage component={HomePage} />, index: true },
+        { element: <HomePage/>, index: true },
         { path: 'profile', element: <PrivatePage component={Profile} />},
         { path: 'users', element: <PrivatePage requiredRole={['grant_dir', 'col_dean']} component={Users}/>},
         { path: 'grant-request', element: <PrivatePage component={GrantRequest}/>},
