@@ -42,6 +42,10 @@ export function AnnouncementBox({
 	announcement: Announcement,
 }) {
 	const user = getCurrentUser();
+
+	// Check if user is empty object
+	const isUserEmpty = Object.keys(user).length === 0;
+
 	const { _id, title, imageUrl, from, until, content, budget, currencyType } =
 		announcement;
 	const timestampOfUntil = new Date(until).getTime();
@@ -59,7 +63,9 @@ export function AnnouncementBox({
 	};
 
 	useEffect(() => {
-		dispatch(fetchRequestData());
+		if (!isUserEmpty) {
+			dispatch(fetchRequestData());
+		}
 	}, []);
 
 	const checkApplied = () => {

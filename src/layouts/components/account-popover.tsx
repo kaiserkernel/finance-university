@@ -31,6 +31,9 @@ export function AccountPopover({ data = [], sx, ...other }: AccountPopoverProps)
   const user = getCurrentUser()
   const router = useRouter();
 
+	// Check if user is empty object
+	const isUserEmpty = Object.keys(user).length === 0;
+
   const pathname = usePathname();
 
   const [openPopover, setOpenPopover] = useState<HTMLButtonElement | null>(null);
@@ -58,22 +61,30 @@ export function AccountPopover({ data = [], sx, ...other }: AccountPopoverProps)
 
   return (
     <>
-      <IconButton
-        onClick={handleOpenPopover}
-        sx={{
-          p: '2px',
-          width: 40,
-          height: 40,
-          background: (theme) =>
-            `conic-gradient(${theme.vars.palette.primary.light}, ${theme.vars.palette.warning.light}, ${theme.vars.palette.primary.light})`,
-          ...sx,
-        }}
-        {...other}
-      >
-        {/* <Avatar alt={_myAccount.displayName} sx={{ width: 1, height: 1 }}> */}
-          {user?.userName?.charAt(0).toUpperCase()}
-        {/* </Avatar> */}
-      </IconButton>
+      {
+        isUserEmpty ? (
+          <Button fullWidth color="success" size="medium" variant="contained" onClick={handleLogout}>
+            Login
+          </Button>
+        ) : (
+          <IconButton
+            onClick={handleOpenPopover}
+            sx={{
+              p: '2px',
+              width: 40,
+              height: 40,
+              background: (theme) =>
+                `conic-gradient(${theme.vars.palette.primary.light}, ${theme.vars.palette.warning.light}, ${theme.vars.palette.primary.light})`,
+              ...sx,
+            }}
+            {...other}
+          >
+            {/* <Avatar alt={_myAccount.displayName} sx={{ width: 1, height: 1 }}> */}
+              {user?.userName?.charAt(0).toUpperCase()}
+            {/* </Avatar> */}
+          </IconButton>
+        )
+      }
 
       <Popover
         open={!!openPopover}
