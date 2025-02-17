@@ -115,6 +115,9 @@ export function NavMobile({
 export function NavContent({ data, slots, workspaces, sx }: NavContentProps) {
 	const pathname = usePathname();
 	const user = getCurrentUser();
+	
+	// Check if user is empty object
+	const isUserEmpty = Object.keys(user).length === 0;
 
 	return (
 		<>
@@ -133,47 +136,51 @@ export function NavContent({ data, slots, workspaces, sx }: NavContentProps) {
 					flexDirection="column"
 					sx={sx}
 				>
-					<Box component="ul" gap={0.5} display="flex" flexDirection="column">
-						{data
-							.filter((item) => !item.guard?.includes(user?.role))
-							.map((item) => {
-								const isActived = item.path === pathname;
-
-								return (
-									<ListItem disableGutters disablePadding key={item.title}>
-										<ListItemButton
-											disableGutters
-											component={RouterLink}
-											href={item.path}
-											sx={{
-												pl: 2,
-												py: 1,
-												gap: 2,
-												pr: 1.5,
-												borderRadius: 0.75,
-												typography: "body1",
-												fontWeight: "fontWeightMedium",
-												color: "var(--layout-nav-item-color)",
-												minHeight: "var(--layout-nav-item-height)",
-												...(isActived && {
-													fontWeight: "fontWeightSemiBold",
-													bgcolor: "var(--layout-nav-item-active-bg)",
-													color: "var(--layout-nav-item-active-color)",
-													"&:hover": {
-														bgcolor: "var(--layout-nav-item-hover-bg)",
-													},
-												}),
-											}}
-										>
-											<Box component="span" flexGrow={1}>
-												{item.title}
-											</Box>
-											{item.info && item.info}
-										</ListItemButton>
-									</ListItem>
-								);
-							})}
-					</Box>
+					{
+						isUserEmpty ? null : (
+							<Box component="ul" gap={0.5} display="flex" flexDirection="column">
+								{data
+									.filter((item) => !item.guard?.includes(user?.role))
+									.map((item) => {
+										const isActived = item.path === pathname;
+		
+										return (
+											<ListItem disableGutters disablePadding key={item.title}>
+												<ListItemButton
+													disableGutters
+													component={RouterLink}
+													href={item.path}
+													sx={{
+														pl: 2,
+														py: 1,
+														gap: 2,
+														pr: 1.5,
+														borderRadius: 0.75,
+														typography: "body1",
+														fontWeight: "fontWeightMedium",
+														color: "var(--layout-nav-item-color)",
+														minHeight: "var(--layout-nav-item-height)",
+														...(isActived && {
+															fontWeight: "fontWeightSemiBold",
+															bgcolor: "var(--layout-nav-item-active-bg)",
+															color: "var(--layout-nav-item-active-color)",
+															"&:hover": {
+																bgcolor: "var(--layout-nav-item-hover-bg)",
+															},
+														}),
+													}}
+												>
+													<Box component="span" flexGrow={1}>
+														{item.title}
+													</Box>
+													{item.info && item.info}
+												</ListItemButton>
+											</ListItem>
+										);
+									})}
+							</Box>
+						)
+					}
 				</Box>
 			</Scrollbar>
 
