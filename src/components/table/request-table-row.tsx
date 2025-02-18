@@ -1,11 +1,10 @@
 import { useState, useCallback, useEffect } from "react";
 
-import Popover from "@mui/material/Popover";
 import TableRow from "@mui/material/TableRow";
-import MenuList from "@mui/material/MenuList";
 import TableCell from "@mui/material/TableCell";
 import IconButton from "@mui/material/IconButton";
-import MenuItem, { menuItemClasses } from "@mui/material/MenuItem";
+import Divider from '@mui/material/Divider';
+import CloseIcon from '@mui/icons-material/Close';
 
 import { Iconify } from "@/components/iconify";
 import {
@@ -13,13 +12,13 @@ import {
 	Dialog,
 	DialogActions,
 	DialogTitle,
-	Link,
+	DialogContent,
 	Typography,
 	Tooltip,
 	Box
 } from "@mui/material";
 import { getCurrentUser } from "@/services/authService";
-import { askMoreInfo, postComment } from "@/services/grantService";
+import { postComment } from "@/services/grantService";
 import ViewCommentDialog from "../dialogs/ViewCommentDialog";
 import { connectSocket, updateRequestRealtime, closeSocketAPI } from "@/services/realtimeUpdateService";
 import AssignDialog from "../dialogs/AssignDialog";
@@ -108,7 +107,7 @@ export function UserTableRow({
 		[]
 	);
 
-	const handleClosePopover = useCallback(() => {
+	const handleClose = useCallback(() => {
 		setOpenPopover(null);
 	}, []);
 
@@ -254,13 +253,13 @@ export function UserTableRow({
 				{/* <Popover
 					open={!!openPopover}
 					anchorEl={openPopover}
-					onClose={handleClosePopover}
+					onClose={handleClose}
 					anchorOrigin={{ vertical: "top", horizontal: "left" }}
 					transformOrigin={{ vertical: "top", horizontal: "right" }}
 				> */}
 				<Dialog
 					open={!!openPopover}
-					onClose={handleClosePopover}
+					onClose={handleClose}
 					fullWidth
 					sx={{
 					  '& .MuiPaper-root': {
@@ -268,6 +267,23 @@ export function UserTableRow({
 					  }
 					}}
 				>
+					<DialogTitle sx={{ m: 0, p: 2 }}>
+						Application
+					</DialogTitle>
+					<IconButton
+						aria-label="close"
+						onClick={handleClose}
+						sx={(theme) => ({
+							position: 'absolute',
+							right: 8,
+							top: 8,
+							color: theme.palette.grey[500],
+						})}
+					>
+						<CloseIcon />
+					</IconButton>
+					<Divider/>
+					<DialogContent>
 					{user.role !== "user" && (
 						<AddComment
 							row={row}
@@ -401,12 +417,13 @@ export function UserTableRow({
 									variant="outlined"
 								>
 									<Iconify icon="solar:clapperboard-edit-broken" />
-									Add document
+									Add More Information
 								</Button>
 							)
 						}
 					</Box>
 					{/* </MenuList> */}
+					</DialogContent>
 				</Dialog>
 				{/* </Popover> */}
 
