@@ -363,16 +363,20 @@ export function UserTableRow({
 							)}
 						{user?.role == "col_dean" && row.assigned == 'pending' && (
 							<>
-								<Button 
-									sx={{ marginLeft: "5px" }} 
-									color="success"
-									size="small"
-									onClick={openAssignDialog}
-									variant="outlined"
-								>
-									<Iconify icon="solar:check-circle-linear" />
-									Assign
-								</Button>
+								{
+									row.milestone === 1 && (
+										<Button 
+											sx={{ marginLeft: "5px" }} 
+											color="success"
+											size="small"
+											onClick={openAssignDialog}
+											variant="outlined"
+										>
+											<Iconify icon="solar:check-circle-linear" />
+											Assign
+										</Button>
+									)
+								}
 								{
 									!row.askMoreInfo && (
 										<Button 
