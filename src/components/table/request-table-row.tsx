@@ -15,17 +15,18 @@ import {
 	DialogTitle,
 	Link,
 	Typography,
-	Tooltip
+	Tooltip,
+	Box
 } from "@mui/material";
 import { getCurrentUser } from "@/services/authService";
 import { askMoreInfo, postComment } from "@/services/grantService";
-import CommentDialog from "../dialogs/CommentDialog";
+import ViewCommentDialog from "../dialogs/ViewCommentDialog";
 import { connectSocket, updateRequestRealtime, closeSocketAPI } from "@/services/realtimeUpdateService";
 import AssignDialog from "../dialogs/AssignDialog";
 import { useAppDispatch } from "@/redux/hooks";
 import AddDocDialog from "../dialogs/AddDocDialog";
 import DocPopover from "../dialogs/DocPopover";
-
+import AddComment from "./AddComment";
 // ----------------------------------------------------------------------
 
 type UserTableRowProps = {
@@ -50,13 +51,12 @@ export function UserTableRow({
 	);
 	const [state, setState] = useState<boolean | null>(null);
 	const [openDialog, setOpenDialog] = useState<boolean>(false);
-	const [openComment, setOpenComment] = useState<boolean>(false);
+	const [openViewComment, setOpenViewComment] = useState<boolean>(false);
 	const [openAssign, setOpenAssignDialog] = useState<boolean>(false)
 	const [openAskInfo, setOpenAskInfo] = useState<boolean>(false)
 	const [docModal, setDocModal] = useState<boolean>(false)
 	const [applicationView, setApplicationView] = useState<HTMLButtonElement | null>(null)
 	const [comment, setComment] = useState("");
-	const [viewCommentState, setViewComment] = useState(false);
 	const [uploadedFile, setUploadedFile] = useState<File | null>(null);
 	const user = getCurrentUser();
 	const [openCommentRole, setOpenCommentRole] = useState<string>("");
@@ -114,28 +114,26 @@ export function UserTableRow({
 
 	// Comment dialog
 	const handleCloseCommentDialog = () => {
-		setOpenComment(false);
-		setViewComment(false);
+		setOpenViewComment(false);
 	};
 	const viewComment = (role: string) => {
-		setOpenComment(true);
-		setViewComment(true);
+		setOpenViewComment(true);
 		setOpenCommentRole(role);
 	};
 	const submitComment = (id: string) => {
 		if (comment.trim()) {
 			postComment(id, comment, uploadedFile);
-			setOpenComment(false);
+			setOpenViewComment(false);
 			setComment("");
-			setViewComment(false)
 			if (uploadedFile) setUploadedFile(null)
 		}
 	};
-	const cancelComment = () => {
-		setOpenComment(false);
-		setViewComment(false)
-		setComment("");
+	const cancelViewComment = () => {
+		setOpenViewComment(false);
 	};
+	const cancelAddComment = () => {
+		setComment("");
+	}
 
 	// Assign dialog
 	const openAssignDialog = () => {
@@ -253,21 +251,44 @@ export function UserTableRow({
 				</TableCell>
 
 				{/* Action popover */}
-				<Popover
+				{/* <Popover
 					open={!!openPopover}
 					anchorEl={openPopover}
 					onClose={handleClosePopover}
 					anchorOrigin={{ vertical: "top", horizontal: "left" }}
 					transformOrigin={{ vertical: "top", horizontal: "right" }}
+				> */}
+				<Dialog
+					open={!!openPopover}
+					onClose={handleClosePopover}
+					fullWidth
+					sx={{
+					  '& .MuiPaper-root': {
+						padding: "1em"
+					  }
+					}}
 				>
-					<MenuList
+					{user.role !== "user" && (
+						<AddComment
+							row={row}
+							comment={comment}
+							uploadedFile={uploadedFile}
+							setComment={setComment}
+							submitComment={submitComment}
+							cancelAddComment={cancelAddComment}
+							onUploadFile={uploadFile}
+							onRemove={removeFile}
+						/>
+					)}
+					{/* <AddComment/> */}
+					{/* <MenuList
 						disablePadding
 						sx={{
 							p: 0.5,
 							gap: 0.5,
-							width: 180,
+							width: "100%",
 							display: "flex",
-							flexDirection: "column",
+							flexDirection: "row",
 							[`& .${menuItemClasses.root}`]: {
 								px: 1,
 								gap: 2,
@@ -276,37 +297,51 @@ export function UserTableRow({
 									bgcolor: "action.selected",
 								},
 							},
+							justifyContent: "space-between"
+						}}
+					> */}
+					<Box 
+						px={3}
+						sx={{
+							display: "flex",
+							justifyContent: "flex-end"
 						}}
 					>
 						{user?.role != "user" && (row[user?.role] == "pending" || row.reviewer_1.status == "pending" || row.reviewer_2.status == "pending") && (
 							<>
-								<MenuItem
+								<Button
 									onClick={handleAcceptClick}
-									sx={{ color: "success.main" }}
+									color="success"
+									sx={{ marginLeft: "5px" }}
+									size="small"
+									variant="outlined"
 								>
 									<Iconify icon="solar:check-circle-broken" />
 									Accept
-								</MenuItem>
+								</Button>
 
-								<MenuItem
+								<Button
 									onClick={handleDenyClick}
-									sx={{ color: "error.main" }}
+									color="error"
+									sx={{ marginLeft: "5px" }}
+									size="small"
+									variant="outlined"
 								>
 									<Iconify icon="solar:forbidden-circle-broken" />
 									Deny
-								</MenuItem>
+								</Button>
 							</>
 						)}
 
-						{user.role !== "user" && (
-							<MenuItem
-								onClick={() => setOpenComment((pre) => !pre)}
+						{/* {user.role !== "user" && (
+							<Button
+								onClick={() => setOpenViewComment((pre) => !pre)}
 								sx={{ color: "info.main" }}
 							>
 								<Iconify icon="solar:paperclip-outline" />
 								Comment
-							</MenuItem>
-						)}
+							</Button>
+						)} */}
 
 						{/* {(user?.role == "col_dean" || user?.role == "user" || user?.role == "grant_dep" && row["grant_dir"] == "approved") && ( */}
 						{(user?.role == "col_dean" ||
@@ -315,37 +350,61 @@ export function UserTableRow({
 							user?.role == "grant_dep" && row["col_dean"] == "approved" ||
 							user?.role == 'grant_dir' && row['grant_dep'] == 'approved' ||
 							user?.role === 'finance' && row['grant_dir'] == 'approved') && (
-								<MenuItem onClick={() => viewComment(user?.role)} sx={{ color: "success.main" }}>
+								<Button 
+									onClick={() => viewComment(user?.role)} 
+									color="success"
+									sx={{ marginLeft: "5px" }}
+									size="small"
+									variant="outlined"
+								>
 									<Iconify icon="solar:paperclip-outline" />
 									View Comments
-								</MenuItem>
+								</Button>
 							)}
 						{user?.role == "col_dean" && row.assigned == 'pending' && (
 							<>
-								<MenuItem sx={{ color: "success.main" }} onClick={openAssignDialog}>
+								<Button 
+									sx={{ marginLeft: "5px" }} 
+									color="success"
+									size="small"
+									onClick={openAssignDialog}
+									variant="outlined"
+								>
 									<Iconify icon="solar:check-circle-linear" />
 									Assign
-								</MenuItem>
+								</Button>
 								{
 									!row.askMoreInfo && (
-										<MenuItem sx={{ color: "info.main" }} onClick={openAskInfoDialog}>
+										<Button 
+											sx={{ marginLeft: "5px" }} 
+											size="small"
+											onClick={openAskInfoDialog}
+											variant="outlined"
+										>
 											<Iconify icon="solar:info-circle-broken" />
 											Ask more Info
-										</MenuItem>
+										</Button>
 									)
 								}
 							</>
 						)}
 						{
 							user?.role == "user" && row["askMoreInfo"] && (
-								<MenuItem sx={{ color: "info.main" }} onClick={openAddDocDialog}>
+								<Button 
+									sx={{ color: "info.main", marginLeft: "5px" }} 
+									size="small"
+									onClick={openAddDocDialog}
+									variant="outlined"
+								>
 									<Iconify icon="solar:clapperboard-edit-broken" />
 									Add document
-								</MenuItem>
+								</Button>
 							)
 						}
-					</MenuList>
-				</Popover>
+					</Box>
+					{/* </MenuList> */}
+				</Dialog>
+				{/* </Popover> */}
 
 				{/* assign dialog */}
 				<AssignDialog
@@ -401,22 +460,13 @@ export function UserTableRow({
 					</DialogActions>
 				</Dialog>
 
-				<CommentDialog
+				<ViewCommentDialog
 					row={row}
-					user={user}
-					openComment={openComment}
-					comment={comment}
-					uploadedFile={uploadedFile}
+					openViewComment={openViewComment}
 					handleCloseCommentDialog={handleCloseCommentDialog}
-					setOpenComment={setOpenComment}
-					cancelComment={cancelComment}
-					setComment={setComment}
-					submitComment={submitComment}
-					viewCommentState={viewCommentState}
-					onUploadFile={uploadFile}
-					onRemove={removeFile}
+					cancelViewComment={cancelViewComment}
 					openCommentRole={openCommentRole}
-				></CommentDialog>
+				></ViewCommentDialog>
 			</TableRow>
 		</>
 	);

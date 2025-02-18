@@ -54,18 +54,35 @@ const DocPopover: React.FC<Props> = ({
             {rowData["application"]}
           </Link>
         </MenuItem>
-        {rowData["additionalDoc"]?.length &&
-          rowData["additionalDoc"].map((doc: string) => (
-            <MenuItem  key={doc}>
+        {
+          rowData["applicationOne"] && (
+            <MenuItem>
               <Link
-              color="info"
-                href={`${import.meta.env.VITE_BASE_URL}/additional_doc/${doc}`}
+                href={`${import.meta.env.VITE_BASE_URL}/application/${
+                  rowData["applicationOne"]
+                }`}
+                color="info"
                 target="_blank"
               >
-                {doc}
+                {rowData["applicationOne"]}
               </Link>
             </MenuItem>
-          ))}
+          )
+        }
+        {
+          !!rowData["additionalDoc"]?.length && 
+            rowData["additionalDoc"].map((doc: string) => (
+              <MenuItem  key={doc}>
+                <Link
+                color="info"
+                  href={`${import.meta.env.VITE_BASE_URL}/additional_doc/${doc}`}
+                  target="_blank"
+                >
+                  {doc}
+                </Link>
+              </MenuItem>
+            ))
+        }
       </MenuList>
     </Popover>
   );

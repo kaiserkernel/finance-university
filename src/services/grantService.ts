@@ -2,10 +2,18 @@ import axios, { isAxiosError } from "axios";
 import { toast } from "react-toastify";
 import { getCurrentUser } from "./authService";
 
-export const requestGrant = (application: File, id: string, budget: number, milestone: number, currencyType: string) => {
+export const requestGrant = (application: File, applicationOne: File | null, id: string, budget: number, milestone: number, currencyType: string) => {
   const user = getCurrentUser();
   const formData = new FormData();
+  
+  // Append first file
   formData.append("application", application);
+
+  // Append second file only if it exists
+  if (applicationOne) {
+    formData.append("applicationOne", applicationOne);
+  }
+  
   const data = {
     announcement: id,
     budget,

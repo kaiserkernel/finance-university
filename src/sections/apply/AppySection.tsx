@@ -38,13 +38,16 @@ const VisuallyHiddenInput = styled("input")({
 export default function ApplySection() {
 	const router = useRouter();
 	const [file, setFile] = React.useState<File | null>(null);
+	const [fileOne, setFileOne] = React.useState<File | null>(null);
 	const [fileUrl, setFileUrl] = React.useState<string>();
+	const [fileUrlOne, setFileUrlOne] = React.useState<string>();
+	const [currentSelectedFileUrl, setCurrentSelectedFileUrl] = React.useState<string>();
 	const [isLoading, setLoading] = React.useState<boolean>(false);
 	const [budget, setBudget] = React.useState<any>({
 		budget: "",
 		milestone: "",
 	});
-	const [budgetLimitation, setBudgetLimitation] = React.useState(0);
+	// const [budgetLimitation, setBudgetLimitation] = React.useState(0);
 	const [currencyType, setCurrencyType] = React.useState<{
 		value: string;
 		label: string;
@@ -66,11 +69,11 @@ export default function ApplySection() {
 		if (params.id) {
 			getAnnouncementById(params.id)
 				.then((res) => {
-					console.log(res, 'apply initial value')
-					setBudget({
+					setBudget((prev:any) => ({
+						...prev,
 						milestone: res.data.stage + 1
-					});
-					setBudgetLimitation(res.data.budget);
+					}));
+					// setBudgetLimitation(res.data.budget);
 				})
 				.catch(() => {
 					// setBudgetLimitation(10000);
@@ -78,14 +81,28 @@ export default function ApplySection() {
 		}
 	}, []);
 
-	const upload = (files: FileList | null) => {
-		setLoading(true);
-		if (files && files.length > 0) {
-			console.log(files);
-			setFile(files[0]);
+	
 
+	const upload = (files: FileList | null, flag?: Boolean) => {
+		setLoading(true);
+
+		if (files && files.length > 0) {
 			const filePath = URL.createObjectURL(files[0]);
-			setFileUrl(filePath);
+			setCurrentSelectedFileUrl(filePath);
+
+			switch (flag) {
+				case true:
+					setFileOne(files[0]);
+
+					setFileUrlOne(filePath);		
+					break;
+			
+				default:
+					setFile(files[0]);
+
+					setFileUrl(filePath);
+					break;
+			}
 		}
 	};
 
@@ -105,10 +122,15 @@ export default function ApplySection() {
 			toast.warn("Please select a currency type.");
 			return;
 		}
+		if (!fileOne && budget.milestone === 1) {
+			toast.warn("Please select second file to upload");
+			return;
+		}
 
 		if (params?.id) {
 			requestGrant(
 				file,
+				fileOne,
 				params.id,
 				budget.budget,
 				budget.milestone,
@@ -116,6 +138,7 @@ export default function ApplySection() {
 			)
 				.then((response) => {
 					setFile(null);
+					setFileOne(null);
 					setLoading(false);
 					setBudget({
 						budget: "",
@@ -125,6 +148,7 @@ export default function ApplySection() {
 						URL.revokeObjectURL(fileUrl);
 					}
 					setFileUrl("");
+					setFileUrlOne("");
 					toast.success("Application submitted");
 					router.push("/");
 				})
@@ -141,25 +165,25 @@ export default function ApplySection() {
 
 	React.useEffect(() => {
 		setLoading(false);
-	}, [file]);
+	}, [currentSelectedFileUrl]);
 
 	const handleBudgetChange = (
 		e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
 	) => {
-		if (Number(e.target.value) <= budgetLimitation) {
+		// if (Number(e.target.value) <= budgetLimitation) {
 			setBudget((pre: any) => ({
 				...pre,
 				budget: e.target.value,
 			}));
-			setBugetAlertEl(null);
-		} else {
-			setBugetAlertEl(e.currentTarget);
-		}
+		// 	setBugetAlertEl(null);
+		// } else {
+		// 	setBugetAlertEl(e.currentTarget);
+		// }
 	};
 
-	const handleCloseBudgetLimitAlert = () => {
-		setBugetAlertEl(null);
-	}
+	// const handleCloseBudgetLimitAlert = () => {
+	// 	setBugetAlertEl(null);
+	// }
 
 	return (
 		<DashboardContent maxWidth="xl">
@@ -196,8 +220,8 @@ export default function ApplySection() {
 									// }))}
 									onChange={handleBudgetChange}
 									aria-describedby={openBudgetAlertId}
-								></TextField>
-								<Popover
+								/>
+								{/* <Popover
 									id={openBudgetAlertId}
 									open={openBudgetAlert}
 									anchorEl={budgetAlertEl}
@@ -210,7 +234,7 @@ export default function ApplySection() {
 									<Typography color={'error'} sx={{ p: 2 }}>
 										Budget limited : {budgetLimitation}
 									</Typography>
-								</Popover>
+								</Popover> */}
 							</Grid>
 							<Grid size={5}>
 								<Autocomplete
@@ -255,6 +279,29 @@ export default function ApplySection() {
 							display="flex"
 							justifyContent={"center"}
 						>
+							{
+								budget.milestone === 1 && (
+									<Button
+										component="label"
+										role={undefined}
+										variant="contained"
+										tabIndex={-1}
+										color="info"
+										startIcon={<CloudUpload />}
+										sx={{
+											marginRight: "10px"
+										}}
+									>
+										Upload Document ( 1 )
+										{/* {isLoading} */}
+										<VisuallyHiddenInput
+											accept="application/pdf"
+											type="file"
+											onChange={(event) => upload(event.target.files, true)}
+										/>
+									</Button>
+								)
+							}
 							<Button
 								component="label"
 								role={undefined}
@@ -264,6 +311,7 @@ export default function ApplySection() {
 								startIcon={<CloudUpload />}
 							>
 								Upload Document
+								{/* {isLoading} */}
 								<VisuallyHiddenInput
 									accept="application/pdf"
 									type="file"
@@ -271,7 +319,7 @@ export default function ApplySection() {
 								/>
 							</Button>
 						</Grid>
-						{fileUrl && (
+						{((budget.milestone !== 1 && fileUrl) || (budget.milestone === 1 && fileUrl && fileUrlOne)) && (
 							<Grid
 								size={{ sm: 6, xs: 12 }}
 								display="flex"
@@ -293,8 +341,8 @@ export default function ApplySection() {
 							<Box sx={{ width: "70%" }}>
 								<LinearProgress />
 							</Box>
-						) : fileUrl ? (
-							<PDFPreview file={fileUrl}></PDFPreview>
+						) : currentSelectedFileUrl ? (
+							<PDFPreview file={currentSelectedFileUrl}></PDFPreview>
 						) : (
 							<Typography color="textSecondary" variant="subtitle1">
 								No file uploaded
