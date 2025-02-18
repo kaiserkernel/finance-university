@@ -2,6 +2,10 @@ import {useState} from 'react';
 import { BarChart } from '@mui/x-charts/BarChart';
 import { DashboardContent } from "@/layouts/dashboard";
 import CircularProgress from '@mui/material/CircularProgress';
+import { toast } from "react-toastify";
+import { isAxiosError } from "axios";
+
+import { fetchChartData } from '@/services/chartService';
 
 import {
   Box,
@@ -22,7 +26,8 @@ export default function Page() {
   const [axios, setAxios] = useState<AxiosProps>({
     xAxios: 'college',
     yAxios: 'budget'
-  })
+  });
+  const [loading, setLoading] = useState<Boolean>(false);
   
   const pData = [24, 13, 98, 38, 48, 38, 43];
   const xLabels = [
@@ -42,12 +47,30 @@ export default function Page() {
   const xAxiosList = ['college', 'announcemnet'];
   const yAxiosList = ['budget', 'milestone'];
 
-  const handleChangeAxios = (evt: React.ChangeEvent<HTMLInputElement>) => {
+  const handleChangeAxios = async (evt: React.ChangeEvent<HTMLInputElement>) => {
     const {name, value} = evt.target;
-    setAxios(prev => ({
-      ...prev,
-      [name]: value
-    }))
+
+    setLoading(true);
+
+    try {
+      const _chatData = await fetchChartData({
+        ...axios,
+        [name]: value
+      });
+  
+      setAxios(prev => ({
+        ...prev,
+        [name]: value
+      }));
+      toast.success("Successfully fetch data for chart");
+    } catch (error) {
+      console.log(error, 'error')
+      // isAxiosError(error)
+      //   ? console.error(error.response?.data)
+      //   : console.error("Error in fetching data: ", error);
+
+    }
+    setLoading(false);
   }
 
   return (
@@ -95,12 +118,23 @@ export default function Page() {
               </MenuItem>
             ))}
           </TextField>
-        </Box>        
-        <BarChart
-          height={500}
-          series={series}
-          xAxis={[{ data: xLabels, scaleType: 'band', label: 'College' }]}
-        />
+        </Box>
+        {
+          loading ? (
+            <Box sx={{ display: "flex", justifyContent: "center"}}>
+              <CircularProgress 
+                size="10rem"
+                color='success'
+              />
+            </Box>
+          ) : (
+            <BarChart
+              height={500}
+              series={series}
+              xAxis={[{ data: xLabels, scaleType: 'band', label: 'College' }]}
+            />
+          )
+        }
       </Card>
     </DashboardContent>
   );
