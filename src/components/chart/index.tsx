@@ -1,5 +1,7 @@
+import {useState} from 'react';
 import { BarChart } from '@mui/x-charts/BarChart';
 import { DashboardContent } from "@/layouts/dashboard";
+import CircularProgress from '@mui/material/CircularProgress';
 
 import {
   Box,
@@ -11,7 +13,17 @@ import {
 
 // ----------------------------------------------------------------------
 
+interface AxiosProps {
+  xAxios: String,
+  yAxios: String
+}
+
 export default function Page() {
+  const [axios, setAxios] = useState<AxiosProps>({
+    xAxios: 'college',
+    yAxios: 'budget'
+  })
+  
   const pData = [24, 13, 98, 38, 48, 38, 43];
   const xLabels = [
     'Page A',
@@ -27,8 +39,16 @@ export default function Page() {
     {data: pData, label: 'pv', id: 'pvId'},
   ]
 
-  const xAxios = ['college', 'announcemnet'];
-  const yAxios = ['fund', 'milestone'];
+  const xAxiosList = ['college', 'announcemnet'];
+  const yAxiosList = ['budget', 'milestone'];
+
+  const handleChangeAxios = (evt: React.ChangeEvent<HTMLInputElement>) => {
+    const {name, value} = evt.target;
+    setAxios(prev => ({
+      ...prev,
+      [name]: value
+    }))
+  }
 
   return (
     <DashboardContent>
@@ -36,7 +56,6 @@ export default function Page() {
         <Typography variant="h4" flexGrow={1}>
           Analysis
         </Typography>
-        <Typography variant="h5">{ }</Typography>
       </Box>
 
       <Card
@@ -49,8 +68,11 @@ export default function Page() {
             select
             label="X-Axios"
             helperText="Please select x-axios data"  
+            onChange={handleChangeAxios}
+            name="xAxios"
+            value={axios.xAxios}
           >
-            {xAxios.map((value, idx) => (
+            {xAxiosList.map((value, idx) => (
               <MenuItem key={idx} value={value}>
                 {value}
               </MenuItem>
@@ -60,11 +82,14 @@ export default function Page() {
             select
             label="Y-Axios"
             helperText="Please select Y-axios data" 
+            onChange={handleChangeAxios}
+            name="yAxios"
+            value={axios.yAxios}
             sx={{
               marginLeft: "20px"
             }} 
           >
-            {yAxios.map((value, idx) => (
+            {yAxiosList.map((value, idx) => (
               <MenuItem key={idx} value={value}>
                 {value}
               </MenuItem>
