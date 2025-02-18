@@ -39,5 +39,10 @@ export const navData = [
     path: '/announcement-portal',
     guard: ["grant_dep", 'user', 'reviewer', "col_dean", "finance"],
     icon: icon('ic-lock'),
+  },
+  {
+    title: 'Chart',
+    path: '/chart',
+    guard: ['user', 'reviewer']
   }
 ];

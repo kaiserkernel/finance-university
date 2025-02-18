@@ -12,6 +12,7 @@ import AnnouncementPortal from '@/pages/admin/AnnouncementPortal';
 import Profile from '@/pages/Profile'
 import Apply from '@/pages/Apply';
 import { setNavigate } from '@/utils/globalNavigator';
+import Chart from '@/pages/Chart';
 
 // ----------------------------------------------------------------------
 
@@ -59,7 +60,8 @@ export function Router() {
         { path: 'users', element: <PrivatePage requiredRole={['grant_dir', 'col_dean']} component={Users}/>},
         { path: 'grant-request', element: <PrivatePage component={GrantRequest}/>},
         { path: 'announcement-portal', element: <PrivatePage requiredRole={['grant_dir']} component={AnnouncementPortal}/>},
-        { path: 'apply/:id', element: <PrivatePage component={Apply}/>}
+        { path: 'apply/:id', element: <PrivatePage component={Apply}/>},
+        { path: 'chart', element: <PrivatePage component={Chart}/> }
       ],
     },
     {
