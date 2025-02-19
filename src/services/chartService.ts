@@ -1,8 +1,16 @@
 import axios from "axios";
 import { College } from "@/types/chart";
 
-export const fetchChartData = (data: Record<any, String>) => {
-    return axios.post("api/chart/", data);
+export const fetchChartData = (data: string) => {
+    return axios.post("api/chart/", {axis: data});
+}
+
+export const fetchChartDataForCollege = (data: string) => {
+    return axios.post("api/chart/college/" + data);
+}
+
+export const fetchChartDataForAnnouncement = (data: string) => {
+    return axios.post("api/chart/announcement/" + data);
 }
 
 export const formatChartData = (data: [College]) => {

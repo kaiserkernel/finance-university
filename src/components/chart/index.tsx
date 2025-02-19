@@ -3,158 +3,213 @@ import { BarChart } from '@mui/x-charts/BarChart';
 import { DashboardContent } from "@/layouts/dashboard";
 import CircularProgress from '@mui/material/CircularProgress';
 import { toast } from "react-toastify";
-
-import { fetchChartData, formatChartData } from '@/services/chartService';
-import { College } from '@/types/chart';
-
+import { ChartsAxisData } from '@mui/x-charts';
 import {
   Box,
   Card,
   Typography,
   TextField,
-  MenuItem
+  MenuItem,
+  Button
 } from "@mui/material";
+import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos';
+
+import { fetchChartData, fetchChartDataForAnnouncement, fetchChartDataForCollege, formatChartData } from '@/services/chartService';
+import { College } from '@/types/chart';
+import { getCurrentUser } from '@/services/authService';
+import { collegeList } from '@/constants/collegeList';
 
 // ----------------------------------------------------------------------
 
-interface AxiosProps {
-  xAxios: string,
-  yAxios: string
+interface SelectedChart {
+  name: string,
+  value: string
 }
 
 export default function Page() {
-  const [axios, setAxios] = useState<AxiosProps>({
-    xAxios: 'college',
-    yAxios: 'budget'
-  });
+  const userInfo = getCurrentUser();
+  const [axis, setAxis] = useState<string>('');
   const [loading, setLoading] = useState<Boolean>(false);
   const [originChartData, setOriginChartData] = useState<College[]>();
   const [chartData, setChartData] = useState<number[]>([]);
   const [xLabels, setXLabels] = useState<string[]>([]);
+  const [selectedChart, setSelectedChart] = useState<SelectedChart>({
+    name: '',
+    value: ''
+  })
 
-  const xAxiosList = ['college', 'announcement'];
-  const yAxiosList = ['budget', 'milestone'];
+  const xAxisList = ['college', 'announcement'];
 
-  const handleChangeAxios = async (evt: React.ChangeEvent<HTMLInputElement>) => {
-    const {name, value} = evt.target;
+  const updateChartData = (xLabels: string[], chartData: number[], axis: string, originChartData?: College[]) => {
+    setXLabels(xLabels);
+    setChartData(chartData);
+    setAxis(axis);
+    if (originChartData) setOriginChartData(originChartData);
+  }
 
+  const handleChangeAxis = async (evt: React.ChangeEvent<HTMLInputElement>) => {
+    const {value} = evt.target;
     setLoading(true);
 
     try {
-      const { data } = await fetchChartData({
-        ...axios,
-        [name]: value
-      });
+      const { data } = await fetchChartData(value);
       const {_xLabel, _chartData} = formatChartData(data.data);
-      
-      setXLabels(_xLabel);
-      setChartData(_chartData);
-      
-      setAxios(prev => ({
-        ...prev,
-        [name]: value
-      }));
-
+      updateChartData(_xLabel, _chartData, value);
       toast.success("Successfully fetch data for chart");
     } catch (error) {
       console.log(error, 'error');
       toast.error("Error occured. Please try again");
+    } finally {
+      setLoading(false);
     }
-    setLoading(false);
+  }
+
+  const handleClickAxis = async (data: ChartsAxisData | null) => {
+    const axisValue = data?.axisValue?.toString();
+
+    if (axis === 'college' && axisValue) {
+      setSelectedChart({
+        name: 'college',
+        value: axisValue
+      });
+
+      try {
+        const { data } = await fetchChartDataForCollege(axisValue);
+        const {_xLabel, _chartData} = formatChartData(data.data);
+        updateChartData(_xLabel, _chartData, 'user');
+        toast.success("Successfully fetch data for chart");
+      } catch (error) {
+        console.log(error, 'Error occured. Please try again');
+        toast.error("Error occured. Please try again");
+      }
+    } else if (axis === 'announcement' && axisValue) {
+      setSelectedChart({
+        name: 'announcement',
+        value: axisValue
+      });
+
+      try {
+        const { data } = await fetchChartDataForAnnouncement(axisValue);
+        const {_xLabel, _chartData} = formatChartData(data.data);
+        updateChartData(_xLabel, _chartData, 'user');
+        toast.success("Successfully fetch data for chart");
+      } catch (error) {
+        console.log(error, 'Error occured. Please try again');
+        toast.error("Error occured. Please try again");
+      }
+    }
+  };
+
+  const handleClickBack = async () => {
+    if (selectedChart.name === 'college' || selectedChart.name === 'announcement') {
+      const { data } = await fetchChartData(selectedChart.name);
+      const _data = data.data;
+      const {_xLabel, _chartData} = formatChartData(_data);
+
+      updateChartData(_xLabel, _chartData, selectedChart.name, _data);
+      setSelectedChart({
+        name: '',
+        value: ''
+      });
+    }
   }
 
   useEffect(() => {
     const fetchInitialData = async () => {
       setLoading(true);
       try {
-        const { data } = await fetchChartData({...axios});
-        setOriginChartData(data.data);
+        let _data;
+        let axis:string = '';
+        
+        if (userInfo.role === 'col_dean' && userInfo.college) {
+          const college = collegeList.find(col => col.value === userInfo.college)?.name || '';
+          axis='user';
+          const { data } = await fetchChartDataForCollege(college);
+          _data = data.data;
 
-        const {_xLabel, _chartData} = formatChartData(data.data);
-        setXLabels(_xLabel);
-        setChartData(_chartData);
+        } else if (['grant_dep', 'grant_dir', 'finance'].includes(userInfo.role)) {
+          axis = 'college';
+          const { data } = await fetchChartData('college');
+          _data = data.data;
+        }
+
+        const {_xLabel, _chartData} = formatChartData(_data);
+        updateChartData(_xLabel, _chartData, axis, _data);
       } catch (error) {
         console.log(error, 'error');
+      } finally {
+        setLoading(false);
       }
-      setLoading(false);
     }
     
     fetchInitialData();
   }, [])
 
+  const ActionPart = () => {
+    if (['grant_dep', 'grant_dir', 'finance'].includes(userInfo.role)) {
+      if (axis === "college" || axis === "announcement") {
+        return (
+          <Box display="flex" justifyContent="flex-end" padding="10px">
+            <TextField
+              select
+              label="X-Axis"
+              helperText="Please select x-axis data"  
+              onChange={handleChangeAxis}
+              name="xAxis"
+              value={axis}
+            >
+              {xAxisList.map((value, idx) => (
+                <MenuItem key={idx} value={value}>
+                  {value}
+                </MenuItem>
+              ))}
+            </TextField>
+          </Box>
+        )
+      } else if (axis === "user") {
+        return (
+          <Box display="flex" justifyContent="space-between">
+            <Typography variant='h5'>{selectedChart.value}</Typography>
+            <Button variant='outlined' onClick={handleClickBack}>
+              <ArrowBackIosIcon/> Back
+            </Button>
+          </Box>
+        )
+      }
+    }
+    return null;
+  };
+
   return (
     <DashboardContent>
       <Box display="flex" alignItems="center" mb={5}>
         <Typography variant="h4" flexGrow={1}>
-          Analysis
+          Analysis {selectedChart.name ? `(${selectedChart.name})` : ''}
         </Typography>
       </Box>
 
-      <Card
-        sx={{
-          padding: "30px"
-        }}
-      >
-        <Box display="flex" justifyContent="flex-end" padding="10px">
-          <TextField
-            select
-            label="X-Axios"
-            helperText="Please select x-axios data"  
-            onChange={handleChangeAxios}
-            name="xAxios"
-            value={axios.xAxios}
-          >
-            {xAxiosList.map((value, idx) => (
-              <MenuItem key={idx} value={value}>
-                {value}
-              </MenuItem>
-            ))}
-          </TextField>
-          <TextField
-            select
-            label="Y-Axios"
-            helperText="Please select Y-axios data" 
-            onChange={handleChangeAxios}
-            name="yAxios"
-            value={axios.yAxios}
-            sx={{
-              marginLeft: "20px"
-            }} 
-          >
-            {yAxiosList.map((value, idx) => (
-              <MenuItem key={idx} value={value}>
-                {value}
-              </MenuItem>
-            ))}
-          </TextField>
-        </Box>
-        {
-          loading ? (
+      <Card sx={{ padding: "30px" }}>
+        <ActionPart/>
+        {loading ? (
             <Box sx={{ display: "flex", justifyContent: "center"}}>
-              <CircularProgress 
-                size="10rem"
-                color='success'
-              />
+              <CircularProgress size="10rem" color='success'/>
             </Box>
           ) : (
             <BarChart
               height={500}
-              series={[{data: chartData, label: axios.yAxios, id: axios.yAxios}]}
-              xAxis={[
-                { 
+              series={[{data: chartData, label: "Budget", id: "budget"}]}
+              xAxis={[{ 
                   data: xLabels, 
                   scaleType: 'band', 
-                  label: axios.xAxios.toLocaleUpperCase(),
-                  dataKey: 'value',
+                  label: axis?.toLocaleUpperCase(),
                   valueFormatter: (value, context) =>
                     context.location === 'tick'
                       ? value
-                      : `${axios.xAxios}: ${axios.xAxios === 'college' ? originChartData?.find((data:College) => data.title === value)?.content : value}`,
-                }
-              ]}
+                      : `${axis}: ${axis === 'college' ? originChartData?.find((data:College) => data.title === value)?.content : value}`,
+                }]}
+              onAxisClick={(_, d) => handleClickAxis(d)}
             />
-          )
-        }
+          )}
       </Card>
     </DashboardContent>
   );
