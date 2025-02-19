@@ -1,11 +1,13 @@
-import {useState} from 'react';
+import {useState, useEffect} from 'react';
 import { BarChart } from '@mui/x-charts/BarChart';
 import { DashboardContent } from "@/layouts/dashboard";
 import CircularProgress from '@mui/material/CircularProgress';
 import { toast } from "react-toastify";
 import { isAxiosError } from "axios";
 
-import { fetchChartData } from '@/services/chartService';
+import { fetchChartData, formatChartData } from '@/services/chartService';
+
+import { collegeList } from '@/constants/collegeList';
 
 import {
   Box,
@@ -18,8 +20,8 @@ import {
 // ----------------------------------------------------------------------
 
 interface AxiosProps {
-  xAxios: String,
-  yAxios: String
+  xAxios: string,
+  yAxios: string
 }
 
 export default function Page() {
@@ -28,21 +30,9 @@ export default function Page() {
     yAxios: 'budget'
   });
   const [loading, setLoading] = useState<Boolean>(false);
+  const [chartData, setChartData] = useState<number[]>([]);
   
-  const pData = [24, 13, 98, 38, 48, 38, 43];
-  const xLabels = [
-    'Page A',
-    'Page B',
-    'Page C',
-    'Page D',
-    'Page E',
-    'Page F',
-    'Page G',
-  ];
-
-  const series = [
-    {data: pData, label: 'pv', id: 'pvId'},
-  ]
+  const xLabels = collegeList.map(log => log.name);
 
   const xAxiosList = ['college', 'announcemnet'];
   const yAxiosList = ['budget', 'milestone'];
@@ -57,21 +47,34 @@ export default function Page() {
         ...axios,
         [name]: value
       });
-  
+      
       setAxios(prev => ({
         ...prev,
         [name]: value
       }));
+
       toast.success("Successfully fetch data for chart");
     } catch (error) {
-      console.log(error, 'error')
-      // isAxiosError(error)
-      //   ? console.error(error.response?.data)
-      //   : console.error("Error in fetching data: ", error);
-
+      console.log(error, 'error');
     }
     setLoading(false);
   }
+
+  useEffect(() => {
+    const fetchInitialData = async () => {
+      setLoading(true);
+      try {
+        const { data } = await fetchChartData({...axios});
+        const _formatData = formatChartData(data.data);
+        setChartData(_formatData);
+      } catch (error) {
+        
+      }
+      setLoading(false);
+    }
+    
+    fetchInitialData();
+  }, [])
 
   return (
     <DashboardContent>
@@ -130,8 +133,19 @@ export default function Page() {
           ) : (
             <BarChart
               height={500}
-              series={series}
-              xAxis={[{ data: xLabels, scaleType: 'band', label: 'College' }]}
+              series={[{data: chartData, label: axios.yAxios, id: axios.yAxios}]}
+              xAxis={[
+                { 
+                  data: xLabels, 
+                  scaleType: 'band', 
+                  label: 'College',
+                  dataKey: 'code',
+                  valueFormatter: (code, context) =>
+                  context.location === 'tick'
+                    ? code
+                    : `College: ${collegeList.find((college) => college.name === code)?.value}`,
+                }
+              ]}
             />
           )
         }

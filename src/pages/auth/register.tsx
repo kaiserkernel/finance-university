@@ -25,6 +25,7 @@ import { CONFIG } from "@/config-global";
 import { FormHelperText } from "@mui/material";
 import { toast } from "react-toastify";
 import { ROLE } from "@/constants/info";
+import { collegeList } from "@/constants/collegeList";
 
 export default withAuthRedirect(function Register() {
 	const [showPassword, setShowPassword] = React.useState(false);
@@ -239,14 +240,13 @@ export default withAuthRedirect(function Register() {
 							label="College"
 							onChange={handleCollegeChange}
 						>
-							<MenuItem value="College of Science and Mathematics Education">College of Science and Mathematics Education</MenuItem>
-							<MenuItem value="College of Social Sciences Education">College of Social Sciences Education</MenuItem>
-							<MenuItem value="College of Languages Education">College of Languages Education</MenuItem>
-							<MenuItem value="College of Educational Sciences">College of Educational Sciences</MenuItem>
-							<MenuItem value="Institute of Physical Education and Sport">Institute of Physical Education and Sport</MenuItem>
-							<MenuItem value="College of Business, Technology and Vocational Education">College of Business, Technology and Vocational Education</MenuItem>
-
-
+							{
+								collegeList.map((log, index) => (
+									<MenuItem value={log.value} key={index}>
+										{log.value}
+									</MenuItem>
+								))
+							}
 						</Select>
 					</FormControl>
 				)}
