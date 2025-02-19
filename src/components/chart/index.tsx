@@ -3,11 +3,9 @@ import { BarChart } from '@mui/x-charts/BarChart';
 import { DashboardContent } from "@/layouts/dashboard";
 import CircularProgress from '@mui/material/CircularProgress';
 import { toast } from "react-toastify";
-import { isAxiosError } from "axios";
 
 import { fetchChartData, formatChartData } from '@/services/chartService';
-
-import { collegeList } from '@/constants/collegeList';
+import { College } from '@/types/chart';
 
 import {
   Box,
@@ -30,11 +28,11 @@ export default function Page() {
     yAxios: 'budget'
   });
   const [loading, setLoading] = useState<Boolean>(false);
+  const [originChartData, setOriginChartData] = useState<College[]>();
   const [chartData, setChartData] = useState<number[]>([]);
-  
-  const xLabels = collegeList.map(log => log.name);
+  const [xLabels, setXLabels] = useState<string[]>([]);
 
-  const xAxiosList = ['college', 'announcemnet'];
+  const xAxiosList = ['college', 'announcement'];
   const yAxiosList = ['budget', 'milestone'];
 
   const handleChangeAxios = async (evt: React.ChangeEvent<HTMLInputElement>) => {
@@ -43,10 +41,14 @@ export default function Page() {
     setLoading(true);
 
     try {
-      const _chatData = await fetchChartData({
+      const { data } = await fetchChartData({
         ...axios,
         [name]: value
       });
+      const {_xLabel, _chartData} = formatChartData(data.data);
+      
+      setXLabels(_xLabel);
+      setChartData(_chartData);
       
       setAxios(prev => ({
         ...prev,
@@ -56,6 +58,7 @@ export default function Page() {
       toast.success("Successfully fetch data for chart");
     } catch (error) {
       console.log(error, 'error');
+      toast.error("Error occured. Please try again");
     }
     setLoading(false);
   }
@@ -65,10 +68,13 @@ export default function Page() {
       setLoading(true);
       try {
         const { data } = await fetchChartData({...axios});
-        const _formatData = formatChartData(data.data);
-        setChartData(_formatData);
+        setOriginChartData(data.data);
+
+        const {_xLabel, _chartData} = formatChartData(data.data);
+        setXLabels(_xLabel);
+        setChartData(_chartData);
       } catch (error) {
-        
+        console.log(error, 'error');
       }
       setLoading(false);
     }
@@ -138,12 +144,12 @@ export default function Page() {
                 { 
                   data: xLabels, 
                   scaleType: 'band', 
-                  label: 'College',
-                  dataKey: 'code',
-                  valueFormatter: (code, context) =>
-                  context.location === 'tick'
-                    ? code
-                    : `College: ${collegeList.find((college) => college.name === code)?.value}`,
+                  label: axios.xAxios.toLocaleUpperCase(),
+                  dataKey: 'value',
+                  valueFormatter: (value, context) =>
+                    context.location === 'tick'
+                      ? value
+                      : `${axios.xAxios}: ${axios.xAxios === 'college' ? originChartData?.find((data:College) => data.title === value)?.content : value}`,
                 }
               ]}
             />

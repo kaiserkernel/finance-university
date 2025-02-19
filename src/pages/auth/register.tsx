@@ -242,8 +242,8 @@ export default withAuthRedirect(function Register() {
 						>
 							{
 								collegeList.map((log, index) => (
-									<MenuItem value={log.value} key={index}>
-										{log.value}
+									<MenuItem value={log} key={index}>
+										{log}
 									</MenuItem>
 								))
 							}
