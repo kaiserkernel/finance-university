@@ -18,10 +18,10 @@ export const columns: any[] = [
 		id: "budget",
 		label: "Budget",
 	},
-	{
-		id: "currencyType",
-		label: "Currency Type",
-	},
+	// {
+	// 	id: "currencyType",
+	// 	label: "Currency Type",
+	// },
 	{
 		id: "milestone",
 		label: "Milestone",
