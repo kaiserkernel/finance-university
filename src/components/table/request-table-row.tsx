@@ -259,7 +259,7 @@ export function UserTableRow({
 								// 	View
 								// </Link>
 								<Button 
-									variant="text" color={row['reviewed'] === 'approved' ? "warning" : 'primary'}
+									variant="text" color={row['reviewed'] === 'reviewed' ? "warning" : 'primary'}
 									onClick={(e) => openApplicationDoc(e)}
 								>
 									View
