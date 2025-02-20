@@ -1,8 +1,11 @@
+import React from "react";
+import { isAxiosError } from "axios";
+import { toast } from "react-toastify";
+import { Typography, Container } from "@mui/material";
+
 import { DashboardContent } from "@/layouts/dashboard";
 import { fetchUserInfo } from "@/services/userService";
 import { User } from "@/types/userInfo";
-import { Typography, Container } from "@mui/material";
-import React from "react";
 import UserProfile from "./UserProfile";
 
 const getUserInfo = (setUser: React.Dispatch<React.SetStateAction<any>>) => {
@@ -13,8 +16,14 @@ const getUserInfo = (setUser: React.Dispatch<React.SetStateAction<any>>) => {
     if (res.data) {
       setUser(res.data);
     }
-  }).catch(err => {
-    console.log('error fetching user info: ', err);
+  }).catch((error) => {
+    if (isAxiosError(error)) {
+      error.response?.data.msg.map((str: string) => {
+        toast.error(str);
+      });
+    }
+    else
+      toast.error("Error occured. Please try again");
   })
 }
 

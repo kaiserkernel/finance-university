@@ -4,6 +4,7 @@ import {
   approveRequest,
   askMoreInfo,
   rejectRequest,
+  reviewRequest,
 } from "@/services/grantService";
 import {
   Box,
@@ -51,20 +52,38 @@ export default function RequestTable({ }: Props) {
 
   const notFound = !dataFiltered.length && !!filterName;
 
-  const handleAccept = (id: string) => {
-    console.log(id, 'accept test')
-    approveRequest(id)
-      .then((_) => {
-        toast.success("Application approved");
-        dispatch(fetchRequestData())
-      })
-      .catch((error) => {
-        console.log("err: ", error);
-        if (isAxiosError(error))
-          error.response?.data.msg.map((str: string) => {
-            toast.error(str);
-          });
-      });
+  const handleAccept = (id: string, prevState?: string) => {
+    if (prevState === 'reviewed' && userInfo.role !== "finance") {
+      reviewRequest(id)
+        .then((_) => {
+          toast.success("Application approved");
+          dispatch(fetchRequestData())
+        })
+        .catch((error) => {
+          if (isAxiosError(error)) {
+            error.response?.data.msg.map((str: string) => {
+              toast.error(str);
+            });
+          }
+          else
+            toast.error("Error occured. Please try again");
+        });
+    } else {
+      approveRequest(id)
+        .then((_) => {
+          toast.success("Application approved");
+          dispatch(fetchRequestData())
+        })
+        .catch((error) => {
+          if (isAxiosError(error)) {
+            error.response?.data.msg.map((str: string) => {
+              toast.error(str);
+            });
+          }
+          else
+            toast.error("Error occured. Please try again");
+        });
+    }
   };
 
   const handleDeny = (id: string) => {
@@ -74,10 +93,13 @@ export default function RequestTable({ }: Props) {
         dispatch(fetchRequestData())
       })
       .catch((error) => {
-        if (isAxiosError(error))
+        if (isAxiosError(error)) {
           error.response?.data.msg.map((str: string) => {
             toast.error(str);
           });
+        }
+        else
+          toast.error("Error occured. Please try again");
       });
   };
 
@@ -105,10 +127,15 @@ export default function RequestTable({ }: Props) {
       .then((res) => {
         setAnnouncements(res.data);
       })
-      .catch((err) => {
-        console.log(err);
+      .catch((error) => {
+        if (isAxiosError(error)) {
+          error.response?.data.msg.map((str: string) => {
+            toast.error(str);
+          });
+        }
+        else
+          toast.error("Error occured. Please try again");
       });
-    // getComments()
   }, []);
 
   return (

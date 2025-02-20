@@ -1,5 +1,7 @@
 import { getRequests } from '@/services/grantService'
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit'
+import { isAxiosError } from 'axios';
+import { toast } from "react-toastify";
 
 const initialState: Record<string, any> = {
     data: [],
@@ -22,7 +24,13 @@ export const fetchRequestData = createAsyncThunk('request/fetchRequestData', asy
 
         return requestData
     } catch (error) {
-        console.error(error)
+        if (isAxiosError(error)) {
+          error.response?.data.msg.map((str: string) => {
+            toast.error(str);
+          });
+        }
+        else
+          toast.error("Error occured. Please try again");
     }
 })
 

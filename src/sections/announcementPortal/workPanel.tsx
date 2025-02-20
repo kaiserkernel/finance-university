@@ -15,6 +15,7 @@ import { useTheme } from "@mui/material";
 import { toast } from "react-toastify";
 import { isAxiosError } from "axios";
 
+import { Announcement } from "@/types/announcement";
 // ----------------------------------------------------------------------
 
 const VisuallyHiddenInput = styled("input")({
@@ -94,10 +95,13 @@ export default function WorkPanel() {
 				toast.success("Announcement published");
 			})
 			.catch((error) => {
-				if (isAxiosError(error))
-					error.response?.data.msg.map((str: string) => {
-						toast.error(str);
-					});
+				if (isAxiosError(error)) {
+				  error.response?.data.msg.map((str: string) => {
+					toast.error(str);
+				  });
+				}
+				else
+				  toast.error("Error occured. Please try again");
 			});
 	};
 

@@ -22,6 +22,7 @@ export const GrantRequest = lazy(() => import('@/pages/GrantRequest'));
 export const Page404 = lazy(() => import('@/pages/page-not-found'));
 export const Register = lazy(() => import("@/pages/auth/register"));
 export const Login = lazy(() => import('@/pages/auth/login'));
+export const Invoice = lazy(() => import('@/pages/Invoice'));
 // ----------------------------------------------------------------------
 
 const renderFallback = (
@@ -61,7 +62,8 @@ export function Router() {
         { path: 'grant-request', element: <PrivatePage component={GrantRequest}/>},
         { path: 'announcement-portal', element: <PrivatePage requiredRole={['grant_dir']} component={AnnouncementPortal}/>},
         { path: 'apply/:id', element: <PrivatePage component={Apply}/>},
-        { path: 'chart', element: <PrivatePage component={Chart}/> }
+        { path: 'chart', element: <PrivatePage component={Chart}/> },
+        { path: "invoice", element: <PrivatePage component={Invoice}/> }
       ],
     },
     {

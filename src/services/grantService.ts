@@ -39,6 +39,9 @@ export const approveRequest = (id: string) => {
 export const rejectRequest = (id: string) => {
   return axios.post("api/grant-application/reject/" + id);
 };
+export const reviewRequest = (id: string) => {
+  return axios.post("api/grant-application/review/" + id);
+};
 
 export const signApplication = (id: string, data: Record<string, any>, refetchRequest: Function) => {
   axios.post("api/grant-application/assign/" + id, data).then(res => {
@@ -77,21 +80,16 @@ export const postComment = (id: string, content: string, file?: File | null) => 
       "Content-Type": "multipart/form-data"
     }
   })
-  .then(response => {
+  .then((_) => {
     toast.success("Comment submited")
   })
-  .catch(err => {
-    if(isAxiosError(err)) {
-      err.response?.data.msg.map((error: string) => {
-        toast.error(error)
-      })
+  .catch(error => {
+    if (isAxiosError(error)) {
+      error.response?.data.msg.map((str: string) => {
+        toast.error(str);
+      });
     }
+    else
+      toast.error("Error occured. Please try again");
   });
 }
-
-// export const getComments = () => {
-//   const user = getCurrentUser();
-//   return axios.get("api/grant-application/comment/get" ).then((response) => {
-//     console.log("response: ", response)
-//   })
-// };

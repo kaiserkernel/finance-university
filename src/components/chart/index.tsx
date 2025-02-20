@@ -13,6 +13,7 @@ import {
   Button
 } from "@mui/material";
 import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos';
+import { isAxiosError } from 'axios';
 
 import { fetchChartData, fetchChartDataForAnnouncement, fetchChartDataForCollege, formatChartData } from '@/services/chartService';
 import { College } from '@/types/chart';
@@ -57,8 +58,13 @@ export default function Page() {
       updateChartData(_xLabel, _chartData, value);
       toast.success("Successfully fetch data for chart");
     } catch (error) {
-      console.log(error, 'error');
-      toast.error("Error occured. Please try again");
+      if (isAxiosError(error)) {
+        error.response?.data.msg.map((str: string) => {
+          toast.error(str);
+        });
+      }
+      else
+        toast.error("Error occured. Please try again");
     } finally {
       setLoading(false);
     }
@@ -79,8 +85,13 @@ export default function Page() {
         updateChartData(_xLabel, _chartData, 'user');
         toast.success("Successfully fetch data for chart");
       } catch (error) {
-        console.log(error, 'Error occured. Please try again');
-        toast.error("Error occured. Please try again");
+        if (isAxiosError(error)) {
+          error.response?.data.msg.map((str: string) => {
+            toast.error(str);
+          });
+        }
+        else
+          toast.error("Error occured. Please try again");
       }
     } else if (axis === 'announcement' && axisValue) {
       setSelectedChart({
@@ -94,8 +105,13 @@ export default function Page() {
         updateChartData(_xLabel, _chartData, 'user');
         toast.success("Successfully fetch data for chart");
       } catch (error) {
-        console.log(error, 'Error occured. Please try again');
-        toast.error("Error occured. Please try again");
+        if (isAxiosError(error)) {
+          error.response?.data.msg.map((str: string) => {
+            toast.error(str);
+          });
+        }
+        else
+          toast.error("Error occured. Please try again");
       }
     }
   };
@@ -136,7 +152,13 @@ export default function Page() {
         const {_xLabel, _chartData} = formatChartData(_data);
         updateChartData(_xLabel, _chartData, axis, _data);
       } catch (error) {
-        console.log(error, 'error');
+        if (isAxiosError(error)) {
+          error.response?.data.msg.map((str: string) => {
+            toast.error(str);
+          });
+        }
+        else
+          toast.error("Error occured. Please try again");
       } finally {
         setLoading(false);
       }

@@ -1,4 +1,6 @@
+import { useEffect, useState } from "react";
 import ShowMoreText from "react-show-more-text";
+import { useNavigate } from 'react-router-dom';
 
 import Box from "@mui/material/Box";
 import Card from "@mui/material/Card";
@@ -13,11 +15,11 @@ import {
 	Typography,
 	useMediaQuery,
 } from "@mui/material";
+
 import { useRouter } from "@/routes/hooks";
 import { Announcement } from "@/types/announcement";
 import { currencyTypes } from "@/constants/currencyType";
 import { getCurrentUser } from "@/services/authService";
-import { useEffect, useState } from "react";
 import { useAppDispatch, useAppSelector } from "@/redux/hooks";
 import { fetchRequestData } from "@/redux/slices/requestSlice";
 
@@ -42,12 +44,12 @@ export function AnnouncementBox({
 	announcement: Announcement,
 }) {
 	const user = getCurrentUser();
+    const navigate = useNavigate();
 
 	// Check if user is empty object
 	const isUserEmpty = Object.keys(user).length === 0;
 
-	const { _id, title, imageUrl, from, until, content, budget, currencyType } =
-		announcement;
+	const { _id, title, imageUrl, from, until, content, budget, currencyType, reviewed } = announcement;
 	const timestampOfUntil = new Date(until).getTime();
 	const timestampOfNow = new Date(`${new Date().getFullYear()}-${new Date().getMonth() + 1}-${new Date().getDate()}`).getTime();
 
@@ -62,12 +64,6 @@ export function AnnouncementBox({
 		setShowMore(value);
 	};
 
-	useEffect(() => {
-		if (!isUserEmpty) {
-			dispatch(fetchRequestData());
-		}
-	}, []);
-
 	const checkApplied = () => {
 		return !!requestState.filter(
 			(request: any) => (request.announcement._id === _id && request.milestone === 3)
@@ -78,6 +74,17 @@ export function AnnouncementBox({
 		if (checkApplied()) return
 		router.push("/apply/" + _id);
 	};
+
+	const handleClickInvioce = (id: string) => {
+		navigate(`/invoice`, { state: { id } }); // Send id as state
+	}
+
+	useEffect(() => {
+		if (!isUserEmpty) {
+			dispatch(fetchRequestData());
+		}
+	}, []);
+
 	return (
 		<Card
 			className="mb-5"
@@ -136,9 +143,18 @@ export function AnnouncementBox({
 				}}
 			>
 				<CardContent sx={{ flex: "1 0 auto" }}>
-					<Typography className="w-full text-xl font-semibold" variant="h4">
-						{title}
-					</Typography>
+					<Box 
+						sx={{
+							display: "flex",
+							justifyContent: "space-between",
+							paddingBottom: "10px"
+						}}
+					>
+						<Typography className="w-full text-xl font-semibold" variant="h4">
+							{title}
+						</Typography>
+						{reviewed === "reviewed" && <Button variant="outlined" color="error" onClick={(_) => handleClickInvioce(_id)}>Invoice</Button>}
+					</Box>
 					<Box
 						sx={{
 							display: "flex",

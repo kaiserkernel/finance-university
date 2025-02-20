@@ -7,4 +7,6 @@ export interface Announcement {
     budget?: number | string;
     currencyType: string
     imageUrl?: string;
+    invoice?: boolean;
+    reviewed?: string
 }

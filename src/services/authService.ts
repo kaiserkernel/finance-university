@@ -14,10 +14,13 @@ const register = (userData: RegUser, navigate: Function) => {
         }
     })
     .catch((error) => {
-      if (isAxiosError(error))
+      if (isAxiosError(error)) {
         error.response?.data.msg.map((str: string) => {
           toast.error(str);
         });
+      }
+      else
+        toast.error("Error occured. Please try again");
     });
 };
 const login = (email: string, password: string, navigate: Function) => {
@@ -43,10 +46,13 @@ const login = (email: string, password: string, navigate: Function) => {
       result.refresh && localStorage.setItem("refresh", result.refresh);
     })
     .catch((error) => {
-      if (isAxiosError(error))
+      if (isAxiosError(error)) {
         error.response?.data.msg.map((str: string) => {
           toast.error(str);
         });
+      }
+      else
+        toast.error("Error occured. Please try again");
     });
 };
 

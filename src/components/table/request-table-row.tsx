@@ -1,4 +1,4 @@
-import { useState, useCallback, useEffect } from "react";
+import { useState, useCallback, useEffect, useMemo } from "react";
 
 import TableRow from "@mui/material/TableRow";
 import TableCell from "@mui/material/TableCell";
@@ -88,7 +88,7 @@ export function UserTableRow({
 	};
 	const confirmState = (id: string) => {
 		if (openDialog) {
-			state && onAccept(id);
+			state && onAccept(id, prevState);
 			state !== null && !state && onDeny(id);
 			setOpenDialog(false);
 			setState(null);
@@ -187,6 +187,16 @@ export function UserTableRow({
 		"finance",
 	]
 
+	const prevState = useMemo(() => {
+		if (user.role === 'col_dean') {
+			return row['reviewed']
+		} else {
+			const prevIndex = rowKeys.indexOf(user.role) - 1;
+			const prevRole = rowKeys[prevIndex];
+			return row[prevRole];
+		}
+	}, []);
+
 	return (
 		<>
 			<TableRow hover tabIndex={-1} role="checkbox" selected={selected}>
@@ -203,7 +213,20 @@ export function UserTableRow({
 							{headItem.id === "announcement" ? (
 								row["announcement"].title
 							) : rowKeys.includes(headItem.id) ? (
-								checkStatus(row[headItem.id], "approved") ? (
+								checkStatus(row[headItem.id], "reviewed") ? (
+									<>
+										<Iconify
+											width={22}
+											icon="solar:check-circle-bold"
+											sx={{ color: "success.main" }}
+										/>
+										<Iconify
+											width={22}
+											icon="solar:check-circle-bold"
+											sx={{ color: "warning.main" }}
+										/>
+									</>
+								): checkStatus(row[headItem.id], "approved") ? (
 									<Iconify
 										width={22}
 										icon="solar:check-circle-bold"
@@ -235,7 +258,12 @@ export function UserTableRow({
 								// >
 								// 	View
 								// </Link>
-								<Button variant="text" onClick={(e) => openApplicationDoc(e)}>View</Button>
+								<Button 
+									variant="text" color={row['reviewed'] === 'approved' ? "warning" : 'primary'}
+									onClick={(e) => openApplicationDoc(e)}
+								>
+									View
+								</Button>
 							) : (
 								row[headItem.id]
 							)}
@@ -284,7 +312,7 @@ export function UserTableRow({
 					</IconButton>
 					<Divider/>
 					<DialogContent>
-					{user.role !== "user" && (
+					{(user.role !== "user" && prevState !== 'reviewed') && (
 						<AddComment
 							row={row}
 							comment={comment}
@@ -323,7 +351,7 @@ export function UserTableRow({
 							justifyContent: "flex-end"
 						}}
 					>
-						{user?.role != "user" && (row[user?.role] == "pending" || row.reviewer_1.status == "pending" || row.reviewer_2.status == "pending") && (
+						{user?.role != "user" && (row[user?.role] == "pending" || prevState === 'reviewed' || row.reviewer_1.status == "pending" || row.reviewer_2.status == "pending") && (
 							<>
 								<Button
 									onClick={handleAcceptClick}
@@ -333,19 +361,23 @@ export function UserTableRow({
 									variant="outlined"
 								>
 									<Iconify icon="solar:check-circle-broken" />
-									Accept
+									Accept {(prevState === 'reviewed' && user.role !== 'finance') && `(2)`}
 								</Button>
 
-								<Button
-									onClick={handleDenyClick}
-									color="error"
-									sx={{ marginLeft: "5px" }}
-									size="small"
-									variant="outlined"
-								>
-									<Iconify icon="solar:forbidden-circle-broken" />
-									Deny
-								</Button>
+								{
+									prevState !== 'reviewed' && (
+										<Button
+											onClick={handleDenyClick}
+											color="error"
+											sx={{ marginLeft: "5px" }}
+											size="small"
+											variant="outlined"
+										>
+											<Iconify icon="solar:forbidden-circle-broken" />
+											Deny
+										</Button>
+									)
+								}
 							</>
 						)}
 
@@ -363,9 +395,9 @@ export function UserTableRow({
 						{(user?.role == "col_dean" ||
 							user?.role == "user" ||
 							// user?.role == "reviewer" ||
-							user?.role == "grant_dep" && row["col_dean"] == "approved" ||
-							user?.role == 'grant_dir' && row['grant_dep'] == 'approved' ||
-							user?.role === 'finance' && row['grant_dir'] == 'approved') && (
+							(user?.role == "grant_dep" && (["approved", 'reviewed'].includes(row["col_dean"]))) ||
+							(user?.role == 'grant_dir' && (["approved", 'reviewed'].includes(row["grant_dep"]))) ||
+							(user?.role === 'finance' && (["approved", 'reviewed'].includes(row["grant_dir"])))) && (
 								<Button 
 									onClick={() => viewComment(user?.role)} 
 									color="success"

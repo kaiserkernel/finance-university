@@ -2,12 +2,15 @@ import React, { useRef } from "react";
 
 import { Grid2 as Grid } from "@mui/material";
 import Typography from "@mui/material/Typography";
+import { isAxiosError } from "axios";
+import { toast } from "react-toastify";
 
 import { DashboardContent } from "@/layouts/dashboard";
 import { AnnouncementBox } from "./parts/announcementBox";
 
 import { getAnnouncements } from "@/services/announcementServices";
 import { Announcement } from "@/types/announcement";
+import { getCurrentUser } from "@/services/authService";
 
 // ----------------------------------------------------------------------
 
@@ -15,11 +18,25 @@ export default function AnnouncementView() {
   const [announcements, setAnnouncements] = React.useState<Announcement[]>();
   const viewRef = useRef<HTMLDivElement | null>(null)
 
+  let userEmail = "";
+  const user = getCurrentUser();
+  if (user && user.role === "user") {
+    userEmail = user.email;
+  }
+
   React.useEffect(() => {
-    getAnnouncements()
+    getAnnouncements(userEmail)
       .then((res) => {
         setAnnouncements(res.data)})
-      .catch((err) => console.error('Error fetching announcements:', err));
+      .catch((error) => {
+        if (isAxiosError(error)) {
+          error.response?.data.msg.map((str: string) => {
+            toast.error(str);
+          });
+        }
+        else
+          toast.error("Error occured. Please try again");
+      });
   }, []);
 
   React.useEffect(() => {

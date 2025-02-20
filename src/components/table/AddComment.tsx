@@ -3,7 +3,8 @@ import {
 	Typography,
 } from "@mui/material";
 import { Box, Button } from "@mui/material";
-import { styled } from "@mui/material/styles";
+
+import { InputFileUpload } from "../fileUpload";
 
 type Props = {
 	row: any;
@@ -14,40 +15,6 @@ type Props = {
 	cancelAddComment: Function;
 	onUploadFile?: (pa: any) => void;
 	onRemove?: Function;
-};
-
-const VisuallyHiddenInput = styled("input")({
-	clip: "rect(0 0 0 0)",
-	clipPath: "inset(50%)",
-	height: 1,
-	overflow: "hidden",
-	position: "absolute",
-	bottom: 0,
-	left: 0,
-	whiteSpace: "nowrap",
-	width: 1,
-});
-
-interface InputFileUploadProps {
-	onUploadFile: (pa: any) => void;
-}
-
-const InputFileUpload: React.FC<InputFileUploadProps> = ({ onUploadFile }) => {
-	return (
-		<Button component="label" variant="text" color="info">
-			Upload file:
-			<VisuallyHiddenInput
-				type="file"
-				accept="application/pdf"
-				onChange={(e) => {
-					if (e.target.files) {
-						onUploadFile(e.target.files[0]);
-					}
-				}}
-				hidden
-			/>
-		</Button>
-	);
 };
 
 export default function AddComment({

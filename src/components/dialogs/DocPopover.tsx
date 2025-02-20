@@ -70,6 +70,21 @@ const DocPopover: React.FC<Props> = ({
           )
         }
         {
+          rowData["invoice"] && (
+            <MenuItem>
+              <Link
+                href={`${import.meta.env.VITE_BASE_URL}/invoice/${
+                  rowData["invoice"]
+                }`}
+                color="info"
+                target="_blank"
+              >
+                {rowData["invoice"]}
+              </Link>
+            </MenuItem>
+          )
+        }
+        {
           !!rowData["additionalDoc"]?.length && 
             rowData["additionalDoc"].map((doc: string) => (
               <MenuItem  key={doc}>

@@ -73,10 +73,15 @@ export default function ApplySection() {
 						...prev,
 						milestone: res.data.stage + 1
 					}));
-					// setBudgetLimitation(res.data.budget);
 				})
-				.catch(() => {
-					// setBudgetLimitation(10000);
+				.catch((error) => {
+					if (isAxiosError(error)) {
+					  error.response?.data.msg.map((str: string) => {
+						toast.error(str);
+					  });
+					}
+					else
+					  toast.error("Error occured. Please try again");
 				});
 		}
 	}, []);
@@ -153,10 +158,13 @@ export default function ApplySection() {
 					router.push("/");
 				})
 				.catch((error) => {
-					if (isAxiosError(error))
-						error.response?.data.msg.map((str: string) => {
-							toast.error(str);
-						});
+					if (isAxiosError(error)) {
+					  error.response?.data.msg.map((str: string) => {
+						toast.error(str);
+					  });
+					}
+					else
+					  toast.error("Error occured. Please try again");
 				});
 			return;
 		}

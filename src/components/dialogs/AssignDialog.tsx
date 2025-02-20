@@ -41,9 +41,13 @@ const AssignDialog: React.FC<Props> = ({
         setReviewers(result.data);
       })
       .catch((error) => {
-        isAxiosError(error)
-          ? console.error(error.response?.data)
-          : console.error("Error in fetching reviewer: ", error);
+        if (isAxiosError(error)) {
+          error.response?.data.msg.map((str: string) => {
+            toast.error(str);
+          });
+        }
+        else
+          toast.error("Error occured. Please try again");
       });
   }, []);
 
