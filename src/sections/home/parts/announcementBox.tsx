@@ -75,7 +75,7 @@ export function AnnouncementBox({
 		router.push("/apply/" + _id);
 	};
 
-	const handleClickInvioce = (id: string) => {
+	const handleClickInvioce = (id?: string) => {
 		navigate(`/invoice`, { state: { id } }); // Send id as state
 	}
 
