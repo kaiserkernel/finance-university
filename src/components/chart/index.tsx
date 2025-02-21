@@ -56,7 +56,9 @@ export default function Page() {
       const { data } = await fetchChartData(value);
       const {_xLabel, _chartData} = formatChartData(data.data);
       updateChartData(_xLabel, _chartData, value);
-      toast.success("Successfully fetch data for chart");
+      if (_chartData.length) {
+        toast.success("Successfully fetch data for chart");
+      }
     } catch (error) {
       if (isAxiosError(error)) {
         error.response?.data.msg.map((str: string) => {
@@ -72,6 +74,7 @@ export default function Page() {
 
   const handleClickAxis = async (data: ChartsAxisData | null) => {
     const axisValue = data?.axisValue?.toString();
+    setLoading(true);
 
     if (axis === 'college' && axisValue) {
       setSelectedChart({
@@ -83,7 +86,9 @@ export default function Page() {
         const { data } = await fetchChartDataForCollege(axisValue);
         const {_xLabel, _chartData} = formatChartData(data.data);
         updateChartData(_xLabel, _chartData, 'user');
-        toast.success("Successfully fetch data for chart");
+        if (_chartData.length) {
+          toast.success("Successfully fetch data for chart");
+        }
       } catch (error) {
         if (isAxiosError(error)) {
           error.response?.data.msg.map((str: string) => {
@@ -92,6 +97,8 @@ export default function Page() {
         }
         else
           toast.error("Error occured. Please try again");
+      } finally {
+        setLoading(false);
       }
     } else if (axis === 'announcement' && axisValue) {
       setSelectedChart({
@@ -103,7 +110,9 @@ export default function Page() {
         const { data } = await fetchChartDataForAnnouncement(axisValue);
         const {_xLabel, _chartData} = formatChartData(data.data);
         updateChartData(_xLabel, _chartData, 'user');
-        toast.success("Successfully fetch data for chart");
+        if (_chartData.length) {
+          toast.success("Successfully fetch data for chart");
+        }
       } catch (error) {
         if (isAxiosError(error)) {
           error.response?.data.msg.map((str: string) => {
@@ -112,6 +121,8 @@ export default function Page() {
         }
         else
           toast.error("Error occured. Please try again");
+      } finally {
+        setLoading(false);
       }
     }
   };
