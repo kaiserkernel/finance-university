@@ -300,7 +300,7 @@ export function UserTableRow({
 					</IconButton>
 					<Divider/>
 					<DialogContent>
-					{(user.role !== "user" && row['reviewed'] === 'pending') && (
+					{(user.role !== "user") && (
 						<AddComment
 							// row={row}
 							comment={comment}

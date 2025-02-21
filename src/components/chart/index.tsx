@@ -10,7 +10,8 @@ import {
   Typography,
   TextField,
   MenuItem,
-  Button
+  Button,
+  Tooltip
 } from "@mui/material";
 import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos';
 import { isAxiosError } from 'axios';
@@ -19,6 +20,7 @@ import { fetchChartData, fetchChartDataForAnnouncement, fetchChartDataForCollege
 import { College } from '@/types/chart';
 import { getCurrentUser } from '@/services/authService';
 import { collegeList } from '@/constants/collegeList';
+import { tooltips } from '@/constants/tooltip';
 
 // ----------------------------------------------------------------------
 
