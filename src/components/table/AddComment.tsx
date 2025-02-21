@@ -7,23 +7,23 @@ import { Box, Button } from "@mui/material";
 import { InputFileUpload } from "../fileUpload";
 
 type Props = {
-	row: any;
+	// row: any;
 	comment: string;
 	uploadedFile?: File | null;
 	setComment: Function;
-	submitComment: Function;
-	cancelAddComment: Function;
+	// submitComment: Function;
+	// cancelAddComment: Function;
 	onUploadFile?: (pa: any) => void;
 	onRemove?: Function;
 };
 
 export default function AddComment({
-	row,
+	// row,
 	comment,
 	uploadedFile,
 	setComment,
-	submitComment,
-	cancelAddComment,
+	// submitComment,
+	// cancelAddComment,
 	onUploadFile,
 	onRemove
 }: Props) {
@@ -79,7 +79,7 @@ export default function AddComment({
                     )}
                 {/* </Box> */}
             </Box>
-            <Box display={"flex"} justifyContent={"end"} px={2} pb={2}>
+            {/* <Box display={"flex"} justifyContent={"end"} px={2} pb={2}>
                 <Box>
                     <Button onClick={() => submitComment(row.id)} color="primary">
                         Submit
@@ -88,7 +88,7 @@ export default function AddComment({
                         Cancel
                     </Button>
                 </Box>
-            </Box>
+            </Box> */}
 		</>
 	);
 }

@@ -52,37 +52,27 @@ export default function RequestTable({ }: Props) {
 
   const notFound = !dataFiltered.length && !!filterName;
 
-  const handleAccept = (id: string, prevState?: string) => {
-    if (prevState === 'reviewed' && userInfo.role !== "finance") {
-      reviewRequest(id)
-        .then((_) => {
-          toast.success("Application approved");
-          dispatch(fetchRequestData())
-        })
-        .catch((error) => {
-          if (isAxiosError(error)) {
-            error.response?.data.msg.map((str: string) => {
-              toast.error(str);
-            });
-          }
-          else
-            toast.error("Error occured. Please try again");
+  const handleAccept = async (id: string, prevState?: string) => {
+    try {
+      if (prevState === 'reviewed' && userInfo.role !== "finance") {
+        await reviewRequest(id);
+        toast.success("Application approved");
+      } else {
+        await approveRequest(id);
+        toast.success("Application approved");
+      }
+  
+      dispatch(fetchRequestData());
+      return true; // Return true if successful
+    } catch (error) {
+      if (isAxiosError(error)) {
+        error.response?.data.msg.forEach((str: string) => {
+          toast.error(str);
         });
-    } else {
-      approveRequest(id)
-        .then((_) => {
-          toast.success("Application approved");
-          dispatch(fetchRequestData())
-        })
-        .catch((error) => {
-          if (isAxiosError(error)) {
-            error.response?.data.msg.map((str: string) => {
-              toast.error(str);
-            });
-          }
-          else
-            toast.error("Error occured. Please try again");
-        });
+      } else {
+        toast.error("Error occurred. Please try again");
+      }
+      return false; // Return false on error
     }
   };
 

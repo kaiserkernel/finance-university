@@ -33,7 +33,7 @@ type UserTableRowProps = {
 	headList: string[];
 	selected: boolean;
 	onAskInfo: (...value: any) => void;
-	onAccept: (...value: any) => void;
+	onAccept: (id: string, prevState?: string) => Promise<boolean>;
 	onDeny: (...value: any) => void;
 };
 
@@ -86,9 +86,14 @@ export function UserTableRow({
 		setOpenDialog(false);
 		setState(null);
 	};
-	const confirmState = (id: string) => {
+	const confirmState = async (id: string) => {
 		if (openDialog) {
-			state && onAccept(id, prevState);
+			if (state) {
+				const accepted = await onAccept(id, prevState);
+				if (accepted) {
+					submitComment(row.id);
+				}
+			}
 			state !== null && !state && onDeny(id);
 			setOpenDialog(false);
 			setState(null);
@@ -130,9 +135,9 @@ export function UserTableRow({
 	const cancelViewComment = () => {
 		setOpenViewComment(false);
 	};
-	const cancelAddComment = () => {
-		setComment("");
-	}
+	// const cancelAddComment = () => {
+	// 	setComment("");
+	// }
 
 	// Assign dialog
 	const openAssignDialog = () => {
@@ -250,14 +255,6 @@ export function UserTableRow({
 											: <> - </>
 								)
 							) : headItem.id == "application" ? (
-								// <Link
-								// 	href={`${import.meta.env.VITE_BASE_URL}/application/${
-								// 		row[headItem.id]
-								// 	}`}
-								// 	target="_blank"
-								// >
-								// 	View
-								// </Link>
 								<Button 
 									variant="text" color={row['reviewed'] === 'reviewed' ? "warning" : 'primary'}
 									onClick={(e) => openApplicationDoc(e)}
@@ -276,15 +273,6 @@ export function UserTableRow({
 						<Iconify icon="eva:more-vertical-fill" />
 					</IconButton>
 				</TableCell>
-
-				{/* Action popover */}
-				{/* <Popover
-					open={!!openPopover}
-					anchorEl={openPopover}
-					onClose={handleClose}
-					anchorOrigin={{ vertical: "top", horizontal: "left" }}
-					transformOrigin={{ vertical: "top", horizontal: "right" }}
-				> */}
 				<Dialog
 					open={!!openPopover}
 					onClose={handleClose}
@@ -312,38 +300,18 @@ export function UserTableRow({
 					</IconButton>
 					<Divider/>
 					<DialogContent>
-					{(user.role !== "user" && prevState !== 'reviewed') && (
+					{(user.role !== "user" && row['reviewed'] === 'pending') && (
 						<AddComment
-							row={row}
+							// row={row}
 							comment={comment}
 							uploadedFile={uploadedFile}
 							setComment={setComment}
-							submitComment={submitComment}
-							cancelAddComment={cancelAddComment}
+							// submitComment={submitComment}
+							// cancelAddComment={cancelAddComment}
 							onUploadFile={uploadFile}
 							onRemove={removeFile}
 						/>
 					)}
-					{/* <AddComment/> */}
-					{/* <MenuList
-						disablePadding
-						sx={{
-							p: 0.5,
-							gap: 0.5,
-							width: "100%",
-							display: "flex",
-							flexDirection: "row",
-							[`& .${menuItemClasses.root}`]: {
-								px: 1,
-								gap: 2,
-								borderRadius: 0.75,
-								[`&.${menuItemClasses.selected}`]: {
-									bgcolor: "action.selected",
-								},
-							},
-							justifyContent: "space-between"
-						}}
-					> */}
 					<Box 
 						px={3}
 						sx={{
