@@ -75,7 +75,7 @@ export default function Page() {
   const handleClickAxis = async (data: ChartsAxisData | null) => {
     const axisValue = data?.axisValue?.toString();
     setLoading(true);
-
+    
     if (axis === 'college' && axisValue) {
       setSelectedChart({
         name: 'college',
@@ -125,6 +125,7 @@ export default function Page() {
         setLoading(false);
       }
     }
+    setLoading(false);
   };
 
   const handleClickBack = async () => {
