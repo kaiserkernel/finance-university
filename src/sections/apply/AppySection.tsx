@@ -294,7 +294,7 @@ export default function ApplySection() {
 										role={undefined}
 										variant="contained"
 										tabIndex={-1}
-										color={file ? "error" : "info"}
+										color={fileOne ? "error" : "info"}
 										startIcon={<CloudUpload />}
 										sx={{
 											marginRight: "10px"

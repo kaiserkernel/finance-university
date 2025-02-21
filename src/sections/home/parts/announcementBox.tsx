@@ -49,7 +49,7 @@ export function AnnouncementBox({
 	// Check if user is empty object
 	const isUserEmpty = Object.keys(user).length === 0;
 
-	const { _id, title, imageUrl, from, until, content, budget, currencyType, invoice } = announcement;
+	const { _id, title, imageUrl, from, until, content, budget, currencyType, invoice, applyState } = announcement;
 	const timestampOfUntil = new Date(until).getTime();
 	const timestampOfNow = new Date(`${new Date().getFullYear()}-${new Date().getMonth() + 1}-${new Date().getDate()}`).getTime();
 
@@ -212,7 +212,7 @@ export function AnnouncementBox({
 						>
 							<Button
 								size="large" onClick={applyForAnnouncement}
-								disabled={checkApplied()}
+								disabled={checkApplied() || applyState}
 							>
 								{checkApplied() ? "Applied" : "Apply"}
 							</Button>

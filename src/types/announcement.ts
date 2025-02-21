@@ -8,5 +8,6 @@ export interface Announcement {
     currencyType: string
     imageUrl?: string;
     invoice?: boolean;
-    reviewed?: string
+    reviewed?: string;
+    applyState?: boolean
 }
