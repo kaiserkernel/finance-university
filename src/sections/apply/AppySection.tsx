@@ -55,13 +55,13 @@ export default function ApplySection() {
 		value: "birr",
 		label: "Birr",
 	});
-	const [budgetAlertEl, setBugetAlertEl] = React.useState<null | HTMLElement>(null);
-	const openBudgetAlert = React.useMemo(() => {
-		return Boolean(budgetAlertEl)
-	}, [budgetAlertEl])
-	const openBudgetAlertId = React.useMemo(() => {
-		return openBudgetAlert ? 'simple-popover' : undefined
-	}, [openBudgetAlert])
+	// const [budgetAlertEl, setBugetAlertEl] = React.useState<null | HTMLElement>(null);
+	// const openBudgetAlert = React.useMemo(() => {
+	// 	return Boolean(budgetAlertEl)
+	// }, [budgetAlertEl])
+	// const openBudgetAlertId = React.useMemo(() => {
+	// 	return openBudgetAlert ? 'simple-popover' : undefined
+	// }, [openBudgetAlert])
 
 	const params = useParams();
 
@@ -141,7 +141,7 @@ export default function ApplySection() {
 				budget.milestone,
 				currencyType.value
 			)
-				.then((response) => {
+				.then((_) => {
 					setFile(null);
 					setFileOne(null);
 					setLoading(false);
@@ -227,7 +227,7 @@ export default function ApplySection() {
 									// 	budget: e.target.value
 									// }))}
 									onChange={handleBudgetChange}
-									aria-describedby={openBudgetAlertId}
+									// aria-describedby={openBudgetAlertId}
 								/>
 								{/* <Popover
 									id={openBudgetAlertId}
@@ -294,14 +294,13 @@ export default function ApplySection() {
 										role={undefined}
 										variant="contained"
 										tabIndex={-1}
-										color="info"
+										color={file ? "error" : "info"}
 										startIcon={<CloudUpload />}
 										sx={{
 											marginRight: "10px"
 										}}
 									>
-										Upload Document ( 1 )
-										{/* {isLoading} */}
+										Upload Document ( 1 ) {fileOne && `: ${fileOne.name}`}
 										<VisuallyHiddenInput
 											accept="application/pdf"
 											type="file"
@@ -315,11 +314,10 @@ export default function ApplySection() {
 								role={undefined}
 								variant="contained"
 								tabIndex={-1}
-								color="info"
+								color={file ? "error" : "info"}
 								startIcon={<CloudUpload />}
 							>
-								Upload Document
-								{/* {isLoading} */}
+								Upload Document {file && `: ${file.name}`}
 								<VisuallyHiddenInput
 									accept="application/pdf"
 									type="file"
