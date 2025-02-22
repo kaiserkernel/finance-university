@@ -79,12 +79,12 @@ const AssignDialog: React.FC<Props> = ({
     handleCloseDialog();
   };
 
-  const denySign = () => {
-    signApplication(applicationId, { assign: "rejected" }, () =>
-      dispatch(fetchRequestData())
-    );
-    handleCloseDialog();
-  };
+  // const denySign = () => {
+  //   signApplication(applicationId, { assign: "rejected" }, () =>
+  //     dispatch(fetchRequestData())
+  //   );
+  //   handleCloseDialog();
+  // };
 
   return (
     <Dialog open={openDialog} onClose={handleClose}>
@@ -123,9 +123,9 @@ const AssignDialog: React.FC<Props> = ({
         >
           Assign
         </Button>
-        <Button onClick={() => denySign()} color="error">
+        {/* <Button onClick={() => denySign()} color="error">
           Deny
-        </Button>
+        </Button> */}
         <Button color="secondary" onClick={handleCloseDialog}>
           Cancel
         </Button>
