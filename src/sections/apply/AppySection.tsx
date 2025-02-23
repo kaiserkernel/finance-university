@@ -300,7 +300,7 @@ export default function ApplySection() {
 											marginRight: "10px"
 										}}
 									>
-										Upload Document ( 1 ) {fileOne && `: ${fileOne.name}`}
+										Personal Info {fileOne && `: ${fileOne.name}`}
 										<VisuallyHiddenInput
 											accept="application/pdf"
 											type="file"
@@ -317,7 +317,7 @@ export default function ApplySection() {
 								color={file ? "error" : "info"}
 								startIcon={<CloudUpload />}
 							>
-								Upload Document {file && `: ${file.name}`}
+								Proposal {file && `: ${file.name}`}
 								<VisuallyHiddenInput
 									accept="application/pdf"
 									type="file"
