@@ -329,7 +329,7 @@ export function UserTableRow({
 									variant="outlined"
 								>
 									<Iconify icon="solar:check-circle-broken" />
-									Accept {(prevState === 'reviewed' && user.role !== 'finance') && `(2)`}
+									Accept {(prevState === 'reviewed' && user.role !== 'finance') && `Inovice`}
 								</Button>
 
 								{
