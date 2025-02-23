@@ -4,11 +4,11 @@ import {
 	DialogContent,
 	DialogTitle,
 	Link,
-	TextField,
 	Typography,
+	Divider
 } from "@mui/material";
 import { Box, Button } from "@mui/material";
-import { styled } from "@mui/material/styles";
+import { useEffect, useMemo, useState } from "react";
 
 type Props = {
 	row: any;
@@ -37,62 +37,97 @@ export default function ViewCommentDialog({
 		"finance"
 	]
 
-	if (openCommentRole === 'grant_dep') {
-		showRoleList = [
-			'col_dean',
-			'finance'
+	const [commentList, setCommentList] = useState <Record<string, any>[]>([]);
+	const [invoiceCommentList, setInvoiceCommentList] = useState <Record<string, any>[]>([]);
+
+	if (['grant_dep', 'grant_dir', 'finance'].includes(openCommentRole)) {
+		showRoleList=[
+			'grant_dep', 'grant_dir', 'finance'
 		]
 	}
 
-	if (openCommentRole === 'grant_dir') {
-		showRoleList = [
-			'grant_dep',
-			'finance'
-		]
-	}
+	useEffect(() => {
+		if (openViewComment) {
+			if (row.comment !== null && row.comment !== undefined) {
+				const _commentList:Record<string, any>[]= [];
+				const _invoiceCommentList:Record<string, any>[]= [];
+				Object.keys(row.comment).map((key) => {
+					if (showRoleList.includes(key)) {
+						const _comments:any = [];
+						const _invoiceComments:any = [];
+						row.comment[key].forEach((log:any) => {
+							if (!log.url.includes('invoice')) {
+								_comments.push(log);
+							} else {
+								_invoiceComments.push(log);
+							}
+						});
+						if (_comments.length) {
+							_commentList.push({[key]: _comments});
+						}
+						if (_invoiceComments.length) {
+							_invoiceCommentList.push({[key]: _comments});
+						}
+					}
+				});
+				setCommentList(_commentList);
+				setInvoiceCommentList(_invoiceCommentList);
+			}
+		}
+	}, [openViewComment])
 
-	if (openCommentRole === "finance") {
-		showRoleList = [
-			'grant_dir'
-		]
-	}
+	const ViewComment = (data:any) => {
+		const {comments} = data;
+		return (
+			comments.length > 0 ? (
+				<>
+					{
+						comments.map((comment:any) => {
+							const key = Object.keys(comment)[0];
+							const value = comment[key];
+							return (
+								<Box p={2} minWidth={300} key={key}>
+									<Typography variant="h6">{getRole(key.includes('reviewer') ? 'reviewer' : key)}</Typography>
 
-	// if (openCommentRole === 'reviewer') {
-	// 	showRoleList
-	// }
+									{
+										value.map((commentData:any) => (
+											<>
+												<Typography variant="body1">
+													{commentData.text}
+												</Typography>
+												{commentData.url && (
+													<Link
+														href={`${import.meta.env.VITE_BASE_URL}/reviews/${commentData.url
+															}`}
+														target="_blank"
+													>
+														View attached document
+													</Link>
+												)}
+											</>
+										))
+									}
+								</Box>
+							)})
+					}
+				</>
+			) : (
+				<Typography variant="h6" color="info" textAlign={"center"}>
+					No comment
+				</Typography>
+			)
+		)
+	}
 
 	return (
 		<Dialog open={openViewComment} onClose={handleCloseCommentDialog}>
 			<DialogTitle mb={1}>Comment</DialogTitle>
 			
 			<DialogContent sx={{ minWidth: 300 }}>
-				{row.comment ? (
-					Object.keys(row.comment)
-						.filter((key) => showRoleList.includes(key)
-						)
-						.map((key: string) => (
-							<Box p={2} minWidth={300} key={key}>
-								<Typography variant="h6">{getRole(key.includes('reviewer') ? 'reviewer' : key)}</Typography>
-
-								<Typography variant="body1">
-									{row.comment[key].text}
-								</Typography>
-								{row.comment[key].url && (
-									<Link
-										href={`${import.meta.env.VITE_BASE_URL}/reviews/${row.comment[key].url
-											}`}
-										target="_blank"
-									>
-										View attached document
-									</Link>
-								)}
-							</Box>
-						))
-				) : (
-					<Typography variant="h6" color="info" textAlign={"center"}>
-						No comment
-					</Typography>
-				)}
+				<ViewComment comments={commentList} />
+				<Divider />
+				<Typography variant="h6">Invoice</Typography>
+				<ViewComment comments={invoiceCommentList} />
 			</DialogContent>
 			
 			<Button onClick={() => cancelViewComment()} size="large">

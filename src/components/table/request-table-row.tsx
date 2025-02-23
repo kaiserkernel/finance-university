@@ -360,12 +360,15 @@ export function UserTableRow({
 						)} */}
 
 						{/* {(user?.role == "col_dean" || user?.role == "user" || user?.role == "grant_dep" && row["grant_dir"] == "approved") && ( */}
-						{(user?.role == "col_dean" ||
-							user?.role == "user" ||
-							// user?.role == "reviewer" ||
-							(user?.role == "grant_dep" && (["approved", 'reviewed'].includes(row["col_dean"]))) ||
-							(user?.role == 'grant_dir' && (["approved", 'reviewed'].includes(row["grant_dep"]))) ||
-							(user?.role === 'finance' && (["approved", 'reviewed'].includes(row["grant_dir"])))) && (
+						{(
+							// user?.role == "col_dean" ||
+							// user?.role == "user" ||
+							// // user?.role == "reviewer" ||
+							// (user?.role == "grant_dep" && (["approved", 'reviewed'].includes(row["col_dean"]))) ||
+							// (user?.role == 'grant_dir' && (["approved", 'reviewed'].includes(row["grant_dep"]))) ||
+							// (user?.role === 'finance' && (["approved", 'reviewed'].includes(row["grant_dir"])))
+							['col_dean', 'grant_dep', 'grant_dir', 'finance'].includes(user.role)
+						) && (
 								<Button 
 									onClick={() => viewComment(user?.role)} 
 									color="success"
