@@ -49,7 +49,7 @@ export function AnnouncementBox({
 	// Check if user is empty object
 	const isUserEmpty = Object.keys(user).length === 0;
 
-	const { _id, title, imageUrl, from, until, content, budget, currencyType, invoice, applyState } = announcement;
+	const { _id, title, imageUrl, from, until, content, budget, currencyType, invoice, applyState, maxMilestone } = announcement;
 	const timestampOfUntil = new Date(until).getTime();
 	const timestampOfNow = new Date(`${new Date().getFullYear()}-${new Date().getMonth() + 1}-${new Date().getDate()}`).getTime();
 
@@ -197,6 +197,13 @@ export function AnnouncementBox({
 							{content}
 						</ShowMoreText>
 					</Box>
+					{
+						!!maxMilestone && (
+							<Box>
+								<Typography variant="h6" className="text-sky-600 pt-4">Milestone: {maxMilestone}</Typography>
+							</Box>
+						)
+					}
 				</CardContent>
 				{timestampOfUntil > timestampOfNow &&
 					user.role === "user"

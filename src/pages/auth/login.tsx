@@ -74,6 +74,11 @@ export default withAuthRedirect(function SlotsSignIn() {
 							},
 						}}
 						onChange={(val) => setEmail(val.target.value)}
+						onKeyDown={(event: React.KeyboardEvent<HTMLInputElement>) => {
+							if (event.key === "Enter") {
+								loginTrigger();
+							}
+						}}
 					/>
 					<FormControl sx={{ my: 2 }} fullWidth variant="outlined">
 						<InputLabel
@@ -106,6 +111,11 @@ export default withAuthRedirect(function SlotsSignIn() {
 								</InputAdornment>
 							}
 							label="Password"
+							onKeyDown={(event: React.KeyboardEvent<HTMLInputElement>) => {
+								if (event.key === "Enter") {
+									loginTrigger();
+								}
+							}}
 						/>
 						{!!(pasMessage && password) && (
 							<FormHelperText error={!!(pasMessage && password)}>

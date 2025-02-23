@@ -9,5 +9,6 @@ export interface Announcement {
     imageUrl?: string;
     invoice?: boolean;
     reviewed?: string;
-    applyState?: boolean
+    applyState?: boolean,
+    maxMilestone?: number
 }
