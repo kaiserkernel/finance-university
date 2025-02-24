@@ -153,7 +153,7 @@ export function AnnouncementBox({
 						<Typography className="w-full text-xl font-semibold" variant="h4">
 							{title}
 						</Typography>
-						{invoice && <Button variant="outlined" color="error" onClick={(_) => handleClickInvioce(_id)}>Invoice</Button>}
+						{invoice && <Button variant="outlined" color="error" onClick={(_) => handleClickInvioce(_id)}>Settlement</Button>}
 					</Box>
 					<Box
 						sx={{

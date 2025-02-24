@@ -133,7 +133,7 @@ export default function ViewCommentDialog({
 			<DialogContent sx={{ minWidth: 300 }}>
 				<ViewComment comments={commentList} />
 				<Divider />
-				<Typography variant="h6">Invoice</Typography>
+				<Typography variant="h6">Settlement</Typography>
 				<ViewComment comments={invoiceCommentList} />
 			</DialogContent>
 			

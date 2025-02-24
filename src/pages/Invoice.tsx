@@ -94,7 +94,7 @@ export default function Page() {
       
       <DashboardContent maxWidth="xl">
         <Typography variant="h4" sx={{ mb: { xs: 3, md: 5 } }}>
-          Invoice
+          Settlement
         </Typography>
         <Grid container spacing={3}>
           <Grid size={12}>
