@@ -20,6 +20,7 @@ import { login } from "@/services/authService";
 import { Iconify } from "@/components/iconify";
 import { withAuthRedirect } from "./withAuthRedirect";
 import { CONFIG } from "@/config-global";
+import { PasswordDialog } from "@/sections/profile/PasswordDialog";
 
 export default withAuthRedirect(function SlotsSignIn() {
 	const navigate = useNavigate();
@@ -27,6 +28,7 @@ export default withAuthRedirect(function SlotsSignIn() {
 	const [email, setEmail] = React.useState<string>("");
 	const [password, setPwd] = React.useState<string>("");
 	const [showPassword, setShowPassword] = React.useState(false);
+	const [openDialog, setOpenDialog] = React.useState<boolean>(false);
 
 	const EmailVali = z.string().email();
 	const PassVali = z.string().min(6);
@@ -139,7 +141,23 @@ export default withAuthRedirect(function SlotsSignIn() {
 					<Link href="/register" variant="body2">
 						Don't you have an account yet?
 					</Link>
+					<br/>
+					<Typography
+						variant="body1"
+						color="primary"
+						component={"span"}
+						className="cursor-pointer hover:underline"
+						onClick={() => setOpenDialog((pre) => !pre)}
+					>
+					Change Password
+					</Typography>
 				</CardContent>
+				
+				<PasswordDialog
+					open={openDialog}
+					onClose={() => setOpenDialog(false)}
+				></PasswordDialog>
+
 			</Box>
 		</>
 		//   </Container>

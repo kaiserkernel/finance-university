@@ -15,6 +15,7 @@ import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 
 type PwdProps = {
+  email: string,
   curPassword: string;
   newPassword: string;
   rePassword: string;
@@ -24,6 +25,7 @@ export function PasswordDialog({
   ...props
 }: DialogProps & { onClose: () => void }) {
   const [pwd, setPwd] = useState<PwdProps>({
+    email: "",
     curPassword: "",
     newPassword: "",
     rePassword: "",
@@ -32,7 +34,7 @@ export function PasswordDialog({
   const [showPassword, setShowPassword] = useState(false);
 
   const handleClose = () => {
-    setPwd({ curPassword: "", newPassword: "", rePassword: "" });
+    setPwd({ email: "", curPassword: "", newPassword: "", rePassword: "" });
     setOpen(false);
     onClose();
   };
@@ -40,6 +42,7 @@ export function PasswordDialog({
   const submitChange = () => {
     if (pwd.newPassword === pwd.rePassword) {
       changePassword({
+        email: pwd.email,
         currentPassword: pwd.curPassword,
         newPassword: pwd.newPassword,
       });
@@ -65,6 +68,15 @@ export function PasswordDialog({
       </DialogTitle>
       <Divider color="primary" />
       <Grid component={"form"} container spacing={3} m={3}>
+        <Grid size={12}>
+          <TextField
+            label="User Email"
+            name="email"
+            fullWidth
+            value={pwd?.email}
+            onChange={(e) => setPwd({ ...pwd, email: e.target.value })}
+          ></TextField>
+        </Grid>
         <Grid size={12}>
           <TextField
             label="Current Password"

@@ -114,9 +114,10 @@ export const updateProfile = async (data: any) => {
 }
 
 export const changePassword = async (passwords: any) => {
-  const user = getCurrentUser();
+  // const user = getCurrentUser();
   try {
-    await axios.put(`api/user/password/${user.email}`, passwords);
+    // await axios.put(`api/user/password/${user.email}`, passwords);
+    await axios.put(`api/user/password/${passwords.email}`, passwords);
     toast.success('Password changed.');
   } catch (error) {
     if (isAxiosError(error)) {
