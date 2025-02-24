@@ -16,11 +16,11 @@ export const connectSocket = () => {
 export const updateRequestRealtime = (dispatch: AppDispatch) => {
   if (!socket) return;
 
-  const handleUpdateRequest = (response: any) => {
+  const handleUpdateRequest = (_response: any) => {
     dispatch(fetchRequestData())
   };
 
-  const handleUpdateComment = (response: any) => {
+  const handleUpdateComment = (_response: any) => {
     dispatch(fetchRequestData())
   };
 
