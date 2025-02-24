@@ -17,12 +17,10 @@ export const updateRequestRealtime = (dispatch: AppDispatch) => {
   if (!socket) return;
 
   const handleUpdateRequest = (response: any) => {
-    console.log('update_request: ', response);
     dispatch(fetchRequestData())
   };
 
   const handleUpdateComment = (response: any) => {
-    console.log('update_comment: ', response);
     dispatch(fetchRequestData())
   };
 

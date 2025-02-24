@@ -64,10 +64,8 @@ export default function ViewCommentDialog({
 								return;
 							}
 							if (!log.url.includes('invoice')) {
-								console.log(log.url, 'no invoice url')
 								_comments.push(log);
 							} else {
-								console.log(log.url, 'invoice url')
 								_invoiceComments.push(log);
 							}
 						});

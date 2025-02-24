@@ -44,7 +44,6 @@ export function UserTableRow({
 
   const allowUser = () => {
     // allowPendingUser(id)
-    console.log('allow : ', action)
     setAction('allow')
     setDialog(true)
   };
