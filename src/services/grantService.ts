@@ -70,9 +70,12 @@ export const submitAdditionalDoc = (id: string, doc: File) => {
 		
 };
 
-export const postComment = (id: string, content: string, file?: File | null) => {
+export const postComment = (id: string, content: string, file?: File | null, invoiceFlag?: boolean) => {
   const formdata = new FormData()
   formdata.append('content', JSON.stringify(content))
+  if (invoiceFlag) {
+    formdata.append('invoice', JSON.stringify('inovice'));
+  }
   if(file) formdata.append('reivew', file)
   
   axios.post("api/grant-application/comment/" + id, formdata, {

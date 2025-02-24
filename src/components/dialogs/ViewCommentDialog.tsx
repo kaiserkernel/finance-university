@@ -63,10 +63,11 @@ export default function ViewCommentDialog({
 								}
 								return;
 							}
-
 							if (!log.url.includes('invoice')) {
+								console.log(log.url, 'no invoice url')
 								_comments.push(log);
 							} else {
+								console.log(log.url, 'invoice url')
 								_invoiceComments.push(log);
 							}
 						});
@@ -74,7 +75,7 @@ export default function ViewCommentDialog({
 							_commentList.push({[key]: _comments});
 						}
 						if (_invoiceComments.length) {
-							_invoiceCommentList.push({[key]: _comments});
+							_invoiceCommentList.push({[key]: _invoiceComments});
 						}
 					}
 				});

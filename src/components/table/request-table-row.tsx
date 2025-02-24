@@ -131,7 +131,11 @@ export function UserTableRow({
 		setOpenCommentRole(role);
 	};
 	const submitComment = (id: string) => {
-		postComment(id, comment, uploadedFile);
+		if (prevState === 'reviewed') {
+			postComment(id, comment, uploadedFile, true)
+		} else {
+			postComment(id, comment, uploadedFile);
+		}
 		setOpenViewComment(false);
 		setComment("");
 		if (uploadedFile) setUploadedFile(null);
