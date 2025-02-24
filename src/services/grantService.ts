@@ -74,7 +74,7 @@ export const postComment = (id: string, content: string, file?: File | null) => 
   const formdata = new FormData()
   formdata.append('content', JSON.stringify(content))
   if(file) formdata.append('reivew', file)
-
+  
   axios.post("api/grant-application/comment/" + id, formdata, {
     headers: {
       "Content-Type": "multipart/form-data"

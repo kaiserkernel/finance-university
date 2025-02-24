@@ -56,6 +56,14 @@ export default function ViewCommentDialog({
 						const _comments:any = [];
 						const _invoiceComments:any = [];
 						row.comment[key].forEach((log:any) => {
+							// finance - invoice
+							if (key === 'finance') {
+								if (log.text || log.url) {
+									_invoiceCommentList.push(log)
+								}
+								return;
+							}
+
 							if (!log.url.includes('invoice')) {
 								_comments.push(log);
 							} else {

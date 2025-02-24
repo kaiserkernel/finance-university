@@ -26,6 +26,7 @@ import { useAppDispatch } from "@/redux/hooks";
 import AddDocDialog from "../dialogs/AddDocDialog";
 import DocPopover from "../dialogs/DocPopover";
 import AddComment from "./AddComment";
+import { toast } from "react-toastify";
 // ----------------------------------------------------------------------
 
 type UserTableRowProps = {
@@ -89,6 +90,11 @@ export function UserTableRow({
 	const confirmState = async (id: string) => {
 		if (openDialog) {
 			if (state) {
+				if (!uploadedFile && user.role !== 'finance') {
+					toast.error("Pleas input upload comment file");
+					return;
+				}
+
 				const accepted = await onAccept(id, prevState);
 				if (accepted) {
 					submitComment(row.id);
@@ -125,12 +131,10 @@ export function UserTableRow({
 		setOpenCommentRole(role);
 	};
 	const submitComment = (id: string) => {
-		if (comment.trim()) {
-			postComment(id, comment, uploadedFile);
-			setOpenViewComment(false);
-			setComment("");
-			if (uploadedFile) setUploadedFile(null)
-		}
+		postComment(id, comment, uploadedFile);
+		setOpenViewComment(false);
+		setComment("");
+		if (uploadedFile) setUploadedFile(null);
 	};
 	const cancelViewComment = () => {
 		setOpenViewComment(false);
