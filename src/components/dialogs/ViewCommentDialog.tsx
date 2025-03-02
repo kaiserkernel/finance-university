@@ -8,7 +8,7 @@ import {
 	Divider
 } from "@mui/material";
 import { Box, Button } from "@mui/material";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 
 type Props = {
 	row: any;
@@ -42,7 +42,7 @@ export default function ViewCommentDialog({
 
 	if (['grant_dep', 'grant_dir', 'finance'].includes(openCommentRole)) {
 		showRoleList=[
-			'grant_dep', 'grant_dir', 'finance'
+			'grant_dep', 'grant_dir', 'finance', 'col_dean'
 		]
 	}
 
@@ -89,16 +89,16 @@ export default function ViewCommentDialog({
 			comments.length > 0 ? (
 				<>
 					{
-						comments.map((comment:any) => {
+						comments.map((comment:any, idx: number) => {
 							const key = Object.keys(comment)[0];
 							const value = comment[key];
 							return (
-								<Box p={2} minWidth={300} key={key}>
+								<Box p={2} minWidth={300} key={idx}>
 									<Typography variant="h6">{getRole(key.includes('reviewer') ? 'reviewer' : key)}</Typography>
 
 									{
-										value.map((commentData:any) => (
-											<>
+										value.map((commentData:any, idx: number) => (
+											<Box key={idx}>
 												<Typography variant="body1">
 													{commentData.text}
 												</Typography>
@@ -111,7 +111,7 @@ export default function ViewCommentDialog({
 														View attached document
 													</Link>
 												)}
-											</>
+											</Box>
 										))
 									}
 								</Box>

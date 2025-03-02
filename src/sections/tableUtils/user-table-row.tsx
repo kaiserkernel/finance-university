@@ -59,8 +59,8 @@ export function UserTableRow({
           {row.allowed || row.rejected ?  <></>: <Checkbox disableRipple checked={selected} onChange={onSelectRow} />}
         </TableCell>
 
-        {headList.map((headItem) => (
-          <TableCell key={row[headItem.id]}>
+        {headList.map((headItem, idx: number) => (
+          <TableCell key={idx}>
             <>
               {headItem.id == "role"
                 ? ROLE.find((role) => role.id === row["role"])?.name

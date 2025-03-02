@@ -42,7 +42,7 @@ export default function ApplySection() {
 	const [fileUrl, setFileUrl] = React.useState<string>();
 	const [fileUrlOne, setFileUrlOne] = React.useState<string>();
 	const [currentSelectedFileUrl, setCurrentSelectedFileUrl] = React.useState<string>();
-	const [isLoading, setLoading] = React.useState<boolean>(false);
+	const [loading, setLoading] = React.useState<boolean>(false);
 	const [budget, setBudget] = React.useState<any>({
 		budget: "",
 		milestone: "",
@@ -89,8 +89,6 @@ export default function ApplySection() {
 	
 
 	const upload = (files: FileList | null, flag?: Boolean) => {
-		setLoading(true);
-
 		if (files && files.length > 0) {
 			const filePath = URL.createObjectURL(files[0]);
 			setCurrentSelectedFileUrl(filePath);
@@ -133,6 +131,8 @@ export default function ApplySection() {
 		}
 
 		if (params?.id) {
+			setLoading(true);
+			
 			requestGrant(
 				file,
 				fileOne,
@@ -144,7 +144,6 @@ export default function ApplySection() {
 				.then((_) => {
 					setFile(null);
 					setFileOne(null);
-					setLoading(false);
 					setBudget({
 						budget: "",
 						milestone: "",
@@ -165,15 +164,14 @@ export default function ApplySection() {
 					}
 					else
 					  toast.error("Error occured. Please try again");
+				})
+				.finally(() => {
+					setLoading(false);
 				});
 			return;
 		}
 		toast.warn("Please select announcement");
 	};
-
-	React.useEffect(() => {
-		setLoading(false);
-	}, [currentSelectedFileUrl]);
 
 	const handleBudgetChange = (
 		e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
@@ -335,6 +333,7 @@ export default function ApplySection() {
 									variant="contained"
 									startIcon={<Publish />}
 									onClick={publishApplication}
+									disabled={loading}
 								>
 									Publish Application
 								</Button>
@@ -343,7 +342,7 @@ export default function ApplySection() {
 					</Grid>
 
 					<Grid size={12} display={"flex"} justifyContent={"center"}>
-						{isLoading ? (
+						{loading ? (
 							<Box sx={{ width: "70%" }}>
 								<LinearProgress />
 							</Box>

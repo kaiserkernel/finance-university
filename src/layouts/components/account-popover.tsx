@@ -63,7 +63,7 @@ export function AccountPopover({ data = [], sx, ...other }: AccountPopoverProps)
     <>
       {
         isUserEmpty ? (
-          <Button fullWidth color="success" size="medium" variant="contained" onClick={handleLogout}>
+          <Button fullWidth color="info" size="medium" variant="contained" onClick={handleLogout}>
             Login
           </Button>
         ) : (

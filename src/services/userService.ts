@@ -34,7 +34,7 @@ export const allowPendingUsers = async (ids: string[], dispatch: any) => {
   try {
     await axios.put("api/pending-user/multi-user", ids);
     toast.success('The selected users are allowed');
-    dispatch()
+    // dispatch()
   } catch (error) {
     if (isAxiosError(error)) {
       error.response?.data.msg.map((str: string) => {
