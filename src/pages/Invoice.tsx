@@ -138,7 +138,7 @@ export default function Page() {
                           <Button 
                             sx={{marginLeft: "50px"}} 
                             variant='outlined'
-                            onClick={(evt) => handleSubmitInvoice(log._id)}
+                            onClick={(_evt) => handleSubmitInvoice(log._id)}
                           >
                             Submit
                           </Button>
