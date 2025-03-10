@@ -47,7 +47,7 @@ export default function ApplySection() {
 		budget: "",
 		milestone: "",
 	});
-	// const [budgetLimitation, setBudgetLimitation] = React.useState(0);
+	const [budgetLimitation, setBudgetLimitation] = React.useState(0);
 	const [currencyType, setCurrencyType] = React.useState<{
 		value: string;
 		label: string;
@@ -55,13 +55,13 @@ export default function ApplySection() {
 		value: "birr",
 		label: "Birr",
 	});
-	// const [budgetAlertEl, setBugetAlertEl] = React.useState<null | HTMLElement>(null);
-	// const openBudgetAlert = React.useMemo(() => {
-	// 	return Boolean(budgetAlertEl)
-	// }, [budgetAlertEl])
-	// const openBudgetAlertId = React.useMemo(() => {
-	// 	return openBudgetAlert ? 'simple-popover' : undefined
-	// }, [openBudgetAlert])
+	const [budgetAlertEl, setBugetAlertEl] = React.useState<null | HTMLElement>(null);
+	const openBudgetAlert = React.useMemo(() => {
+		return Boolean(budgetAlertEl)
+	}, [budgetAlertEl])
+	const openBudgetAlertId = React.useMemo(() => {
+		return openBudgetAlert ? 'simple-popover' : undefined
+	}, [openBudgetAlert])
 
 	const params = useParams();
 
@@ -69,6 +69,8 @@ export default function ApplySection() {
 		if (params.id) {
 			getAnnouncementById(params.id)
 				.then((res) => {
+					const { budget } = res.data;
+					setBudgetLimitation(budget);
 					setBudget((prev:any) => ({
 						...prev,
 						milestone: res.data.stage + 1
@@ -176,20 +178,20 @@ export default function ApplySection() {
 	const handleBudgetChange = (
 		e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
 	) => {
-		// if (Number(e.target.value) <= budgetLimitation) {
+		if (Number(e.target.value) <= budgetLimitation) {
 			setBudget((pre: any) => ({
 				...pre,
 				budget: e.target.value,
 			}));
-		// 	setBugetAlertEl(null);
-		// } else {
-		// 	setBugetAlertEl(e.currentTarget);
-		// }
+			setBugetAlertEl(null);
+		} else {
+			setBugetAlertEl(e.currentTarget);
+		}
 	};
 
-	// const handleCloseBudgetLimitAlert = () => {
-	// 	setBugetAlertEl(null);
-	// }
+	const handleCloseBudgetLimitAlert = () => {
+		setBugetAlertEl(null);
+	}
 
 	return (
 		<DashboardContent maxWidth="xl">
@@ -225,9 +227,9 @@ export default function ApplySection() {
 									// 	budget: e.target.value
 									// }))}
 									onChange={handleBudgetChange}
-									// aria-describedby={openBudgetAlertId}
+									aria-describedby={openBudgetAlertId}
 								/>
-								{/* <Popover
+								<Popover
 									id={openBudgetAlertId}
 									open={openBudgetAlert}
 									anchorEl={budgetAlertEl}
@@ -240,7 +242,7 @@ export default function ApplySection() {
 									<Typography color={'error'} sx={{ p: 2 }}>
 										Budget limited : {budgetLimitation}
 									</Typography>
-								</Popover> */}
+								</Popover>
 							</Grid>
 							<Grid size={5}>
 								<Autocomplete
