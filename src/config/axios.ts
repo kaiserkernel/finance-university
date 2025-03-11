@@ -11,7 +11,7 @@ axios.interceptors.request.use((config: InternalAxiosRequestConfig) => {
     const token = localStorage.getItem('token')
     if(token) config.headers['Authorization'] = token
     if(!token || (token && isTokenExpired(token))) {
-        // refresh()
+        window.location.href = "/login"; // Redirect to login page
     } 
     return config
 })
