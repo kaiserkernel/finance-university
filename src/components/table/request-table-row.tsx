@@ -269,6 +269,8 @@ export function UserTableRow({
 								>
 									View
 								</Button>
+							) : (headItem.id === "name" && user.role === 'reviewer') ? (
+								"******"
 							) : (
 								row[headItem.id]
 							)}
