@@ -269,8 +269,10 @@ export function UserTableRow({
 								>
 									View
 								</Button>
-							) : (headItem.id === "name" && user.role === 'reviewer') ? (
-								"******"
+							) : ((headItem.id === "name" || headItem.id == "enrollment") && user.role === 'reviewer') ? (
+								"----"
+							) : (headItem.id.includes("reviewer") && user.role !== "col_dean") ? (
+								"Reviewer"
 							) : (
 								row[headItem.id]
 							)}
