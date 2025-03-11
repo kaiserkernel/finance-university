@@ -38,9 +38,9 @@ const VisuallyHiddenInput = styled("input")({
 export default function ApplySection() {
 	const router = useRouter();
 	const [file, setFile] = React.useState<File | null>(null);
-	const [fileOne, setFileOne] = React.useState<File | null>(null);
+	const [fileOne, setFileOne] = React.useState<File | null>(null); // personal info file
 	const [fileUrl, setFileUrl] = React.useState<string>();
-	const [fileUrlOne, setFileUrlOne] = React.useState<string>();
+	const [fileUrlOne, setFileUrlOne] = React.useState<string>(); // personal info file url
 	const [currentSelectedFileUrl, setCurrentSelectedFileUrl] = React.useState<string>();
 	const [loading, setLoading] = React.useState<boolean>(false);
 	const [budget, setBudget] = React.useState<any>({
@@ -87,8 +87,6 @@ export default function ApplySection() {
 				});
 		}
 	}, []);
-
-	
 
 	const upload = (files: FileList | null, flag?: Boolean) => {
 		if (files && files.length > 0) {

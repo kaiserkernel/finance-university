@@ -1,7 +1,9 @@
+import React from "react";
 import { Link, Typography } from "@mui/material";
 import { MenuList, Popover } from "@mui/material";
 import MenuItem, { menuItemClasses } from "@mui/material/MenuItem";
-import React from "react";
+
+import { getCurrentUser } from "@/services/authService";
 
 type Props = {
   rowData: any;
@@ -14,6 +16,8 @@ const DocPopover: React.FC<Props> = ({
   openPopover,
   handleClosePopover,
 }) => {
+  const userInfo = getCurrentUser();
+
   return (
     <Popover
       open={!!openPopover}
@@ -55,7 +59,7 @@ const DocPopover: React.FC<Props> = ({
           </Link>
         </MenuItem>
         {
-          rowData["applicationOne"] && (
+          (rowData["applicationOne"] && userInfo.role !== "reviewer") && (
             <MenuItem>
               <Link
                 href={`${import.meta.env.VITE_BASE_URL}/application/${
