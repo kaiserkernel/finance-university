@@ -7,6 +7,7 @@ import { useScrollToTop } from "@/hooks/use-scroll-to-top";
 import { ThemeProvider } from "@/theme/theme-provider";
 import { Provider } from "react-redux";
 import { store } from "@/redux/store";
+import AuthCheck from "@/components/authCheck";
 
 import "react-toastify/dist/ReactToastify.css";
 // ----------------------------------------------------------------------
@@ -16,10 +17,12 @@ export default function App() {
 
   return (
     <Provider store={store}>
-      <ThemeProvider>
-        <Router />
-        <ToastContainer closeOnClick autoClose={3000} />
-      </ThemeProvider>
+      <AuthCheck>
+        <ThemeProvider>
+          <Router />
+          <ToastContainer closeOnClick autoClose={3000} />
+        </ThemeProvider>
+      </AuthCheck>
     </Provider>
   );
 }

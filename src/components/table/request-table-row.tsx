@@ -252,10 +252,14 @@ export function UserTableRow({
 										sx={{ color: "error.main" }}
 									/>
 								) : (
-									(headItem.id == 'reviewer_1' || headItem.id == 'reviewer_2') && row[headItem.id]?.user?.email ?
-										<Tooltip title={row[headItem.id]?.user.email}>
-											<Typography>{`${row[headItem.id].user.firstName} ${row[headItem.id].user.lastName}`.trim()}</Typography>
-										</Tooltip>
+									(headItem.id.includes("reviewer")) && row[headItem.id]?.user?.email ?
+										(user.role === "col_dean" ? 
+											(
+												<Tooltip title={row[headItem.id]?.user.email}>
+													<Typography>{`${row[headItem.id].user.firstName} ${row[headItem.id].user.lastName}`.trim()}</Typography>
+												</Tooltip>
+											) : <Typography>Reviewer</Typography>
+										)
 										:
 										(checkStatus(row[headItem.id], "pending"))
 											&& (row["askMoreInfo"] && headItem.id == "assigned")
@@ -271,8 +275,6 @@ export function UserTableRow({
 								</Button>
 							) : ((headItem.id === "name" || headItem.id == "enrollment") && user.role === 'reviewer') ? (
 								"----"
-							) : (headItem.id.includes("reviewer") && user.role !== "col_dean") ? (
-								"Reviewer"
 							) : (
 								row[headItem.id]
 							)}
