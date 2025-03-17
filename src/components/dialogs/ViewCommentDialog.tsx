@@ -40,6 +40,12 @@ export default function ViewCommentDialog({
 	const [commentList, setCommentList] = useState <Record<string, any>[]>([]);
 	const [invoiceCommentList, setInvoiceCommentList] = useState <Record<string, any>[]>([]);
 
+	if (["reviewer_1, reviewer_2"].includes(openCommentRole)) {
+		showRoleList = [
+			""
+		]
+	}
+
 	if (['grant_dep', 'grant_dir', 'finance'].includes(openCommentRole)) {
 		showRoleList=[
 			'grant_dep', 'grant_dir', 'finance', 'col_dean'
