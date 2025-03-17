@@ -71,7 +71,7 @@ const AssignDialog: React.FC<Props> = ({
       return;
     }
     const addedComment = await submitComment(applicationId);
-    if (addedComment) {
+    if (addedComment) { 
       signApplication(
         applicationId,
         { assign: "approved", reviewers: selectedReviewer },
