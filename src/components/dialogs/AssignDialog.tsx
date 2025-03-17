@@ -23,7 +23,7 @@ type Props = {
   openDialog: boolean;
   handleCloseDialog: () => void;
   applicationId: string;
-  submitComment: (_id: string) => void
+  submitComment: (_id: string) => Promise<boolean>
   children?: ReactNode
 };
 
@@ -65,18 +65,20 @@ const AssignDialog: React.FC<Props> = ({
     }
   };
 
-  const confirmState = () => {
+  const confirmState = async () => {
     if (selectedReviewer?.length !== 2) {
       toast.error("Please select two reviewers");
       return;
     }
-    signApplication(
-      applicationId,
-      { assign: "approved", reviewers: selectedReviewer },
-      () => dispatch(fetchRequestData())
-    );
-    submitComment(applicationId);
-    handleCloseDialog();
+    const addedComment = await submitComment(applicationId);
+    if (addedComment) {
+      signApplication(
+        applicationId,
+        { assign: "approved", reviewers: selectedReviewer },
+        () => dispatch(fetchRequestData())
+      );
+      handleCloseDialog();
+    }
   };
 
   const handleClose = () => {

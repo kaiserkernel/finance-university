@@ -90,14 +90,13 @@ export function UserTableRow({
 	const confirmState = async (id: string) => {
 		if (openDialog) {
 			if (state) {
-				if (!uploadedFile && user.role !== 'finance') {
-					toast.error("Pleas input upload comment file");
-					return;
-				}
-
-				const accepted = await onAccept(id, prevState);
-				if (accepted) {
-					submitComment(row.id);
+				// const accepted = await onAccept(id, prevState);
+				// if (accepted) {
+				// 	submitComment(row.id);
+				// }
+				const addedComment = await submitComment(row.id);
+				if (addedComment) {
+					await onAccept(id, prevState)
 				}
 			}
 			state !== null && !state && onDeny(id);
@@ -130,15 +129,25 @@ export function UserTableRow({
 		setOpenViewComment(true);
 		setOpenCommentRole(role);
 	};
-	const submitComment = (id: string) => {
-		if (prevState === 'reviewed') {
-			postComment(id, comment, uploadedFile, true)
-		} else {
-			postComment(id, comment, uploadedFile);
+	const submitComment = async (id: string) => {
+		if (!uploadedFile && user.role !== 'finance') {
+			toast.error("Pleas input upload comment file");
+			return false;
 		}
-		setOpenViewComment(false);
-		setComment("");
-		if (uploadedFile) setUploadedFile(null);
+		try {
+			if (prevState === 'reviewed') {
+				await postComment(id, comment, uploadedFile, true)
+			} else {
+				await postComment(id, comment, uploadedFile);
+			}
+			return true
+		} catch (error) {
+			return false
+		} finally {
+			setOpenViewComment(false);
+			setComment("");
+			if (uploadedFile) setUploadedFile(null);
+		}
 	};
 	const cancelViewComment = () => {
 		setOpenViewComment(false);
