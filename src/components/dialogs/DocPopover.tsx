@@ -49,7 +49,7 @@ const DocPopover: React.FC<Props> = ({
       >
         <MenuItem >
           <Link
-            href={`${import.meta.env.VITE_BASE_URL}/application/${
+            href={`${import.meta.env.VITE_BASE_URL}/applications/${
               rowData["application"]
             }`}
             color="info"
@@ -62,7 +62,7 @@ const DocPopover: React.FC<Props> = ({
           (rowData["applicationOne"] && userInfo.role !== "reviewer") && (
             <MenuItem>
               <Link
-                href={`${import.meta.env.VITE_BASE_URL}/application/${
+                href={`${import.meta.env.VITE_BASE_URL}/applications/${
                   rowData["applicationOne"]
                 }`}
                 color="info"
