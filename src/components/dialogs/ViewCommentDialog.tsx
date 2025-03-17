@@ -42,7 +42,7 @@ export default function ViewCommentDialog({
 
 	if (["reviewer_1, reviewer_2"].includes(openCommentRole)) {
 		showRoleList = [
-			""
+			"col_dean"
 		]
 	}
 
