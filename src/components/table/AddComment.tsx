@@ -45,15 +45,10 @@ export default function AddComment({
                     hidden
                     sx={{
                         visibility: "hidden",
-                        height: 0,
-                        // m: 0,
-                        // p: 0,
+                        height: 0
                     }}
                 ></TextField>
-                {/* <Box> */}
                 {
-                    // 	(user.role === "reviewer" ||
-                    // user.role === "col_dean") &&
                     onUploadFile ? (
                         <Box display={"flex"}>
                             {uploadedFile ? (
@@ -77,18 +72,7 @@ export default function AddComment({
                     ) : (
                         ""
                     )}
-                {/* </Box> */}
             </Box>
-            {/* <Box display={"flex"} justifyContent={"end"} px={2} pb={2}>
-                <Box>
-                    <Button onClick={() => submitComment(row.id)} color="primary">
-                        Submit
-                    </Button>
-                    <Button onClick={() => cancelAddComment()} color="secondary">
-                        Cancel
-                    </Button>
-                </Box>
-            </Box> */}
 		</>
 	);
 }

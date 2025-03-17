@@ -314,18 +314,6 @@ export function UserTableRow({
 					</IconButton>
 					<Divider/>
 					<DialogContent>
-					{(user.role !== "user") && (
-						<AddComment
-							// row={row}
-							comment={comment}
-							uploadedFile={uploadedFile}
-							setComment={setComment}
-							// submitComment={submitComment}
-							// cancelAddComment={cancelAddComment}
-							onUploadFile={uploadFile}
-							onRemove={removeFile}
-						/>
-					)}
 					<Box 
 						px={3}
 						sx={{
@@ -449,7 +437,21 @@ export function UserTableRow({
 					applicationId={row._id}
 					openDialog={openAssign}
 					handleCloseDialog={() => { setOpenAssignDialog(false) }}
-				></AssignDialog>
+					submitComment={submitComment}
+				>
+					{(user.role !== "user") && (
+						<AddComment
+							// row={row}
+							comment={comment}
+							uploadedFile={uploadedFile}
+							setComment={setComment}
+							// submitComment={submitComment}
+							// cancelAddComment={cancelAddComment}
+							onUploadFile={uploadFile}
+							onRemove={removeFile}
+						/>
+					)}
+				</AssignDialog>
 
 				{/* Add doc */}
 				<AddDocDialog
@@ -488,6 +490,20 @@ export function UserTableRow({
 						Are you sure you want to{" "}
 						{state ? "accept" : "deny"} this application?
 					</Typography>
+					
+					{(user.role !== "user") && (
+						<AddComment
+							// row={row}
+							comment={comment}
+							uploadedFile={uploadedFile}
+							setComment={setComment}
+							// submitComment={submitComment}
+							// cancelAddComment={cancelAddComment}
+							onUploadFile={uploadFile}
+							onRemove={removeFile}
+						/>
+					)}
+
 					<DialogActions>
 						<Button onClick={() => confirmState(row.id)} color="primary">
 							Yes

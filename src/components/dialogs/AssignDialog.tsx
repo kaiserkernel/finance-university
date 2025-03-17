@@ -16,19 +16,23 @@ import {
   Typography,
 } from "@mui/material";
 import { isAxiosError } from "axios";
-import { useEffect, useState } from "react";
+import React, { ReactNode, useEffect, useState } from "react";
 import { toast } from "react-toastify";
 
 type Props = {
   openDialog: boolean;
   handleCloseDialog: () => void;
   applicationId: string;
+  submitComment: (_id: string) => void
+  children?: ReactNode
 };
 
 const AssignDialog: React.FC<Props> = ({
   openDialog,
   handleCloseDialog,
   applicationId,
+  submitComment,
+  children
 }) => {
   const [reviewers, setReviewers] = useState<any[]>();
   const [selectedReviewer, setSelectedReviewer] = useState<string[]>([]);
@@ -71,6 +75,7 @@ const AssignDialog: React.FC<Props> = ({
       { assign: "approved", reviewers: selectedReviewer },
       () => dispatch(fetchRequestData())
     );
+    submitComment(applicationId);
     handleCloseDialog();
   };
 
@@ -115,6 +120,9 @@ const AssignDialog: React.FC<Props> = ({
           )}
         </List>
       </DialogContent>
+      {
+        children && children
+      }
       <DialogActions>
         <Button
           color="primary"
