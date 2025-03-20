@@ -90,9 +90,13 @@ export function UserTableRow({
 	const confirmState = async (id: string) => {
 		if (openDialog) {
 			if (state) {
-				const accepted = await onAccept(id, prevState);
-				if (accepted) {
-					await submitComment(row.id);
+				// const accepted = await onAccept(id, prevState);
+				// if (accepted) {
+				// 	await submitComment(row.id);
+				// }
+				const addedComment = await submitComment(row.id);
+				if (addedComment) {
+					await onAccept(id, prevState)
 				}
 			}
 			state !== null && !state && onDeny(id);
