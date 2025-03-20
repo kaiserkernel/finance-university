@@ -126,8 +126,12 @@ export function UserTableRow({
 		setOpenCommentRole(role);
 	};
 	const submitComment = async (id: string) => {
-		if (!uploadedFile && user.role !== 'finance') {
-			toast.error("Pleas input upload comment file");
+		// if (!uploadedFile && user.role !== 'finance') {
+		// 	toast.error("Pleas input upload comment file");
+		// 	return false;
+		// }
+		if (!uploadedFile && !comment) {
+			toast.error("Pleas input upload file or comment");
 			return false;
 		}
 		try {
