@@ -54,6 +54,8 @@ export default function ViewCommentDialog({
 
 	useEffect(() => {
 		if (openViewComment) {
+			console.log(row.comment, "comments")
+			console.log(openCommentRole, "open comment role")
 			if (row.comment !== null && row.comment !== undefined) {
 				const _commentList:Record<string, any>[]= [];
 				const _invoiceCommentList:Record<string, any>[]= [];
@@ -63,13 +65,14 @@ export default function ViewCommentDialog({
 						const _invoiceComments:any = [];
 						row.comment[key].forEach((log:any) => {
 							// finance - invoice
-							if (key === 'finance') {
-								if (log.text || log.url) {
-									_invoiceCommentList.push(log)
-								}
-								return;
-							}
-							if (!log.url.includes('invoice')) {
+							// if (key === 'finance') {
+							// 	if (log.text || log.url) {
+							// 		_invoiceCommentList.push(log)
+							// 	}
+							// 	return;
+							// }
+
+							if (log.commentType !== "settlement" ) {
 								_comments.push(log);
 							} else {
 								_invoiceComments.push(log);
@@ -103,7 +106,7 @@ export default function ViewCommentDialog({
 									<Typography variant="h6">{getRole(key.includes('reviewer') ? 'reviewer' : key)}</Typography>
 
 									{
-										value.map((commentData:any, idx: number) => (
+										value && value.map((commentData:any, idx: number) => (
 											<Box key={idx}>
 												<Typography variant="body1">
 													{commentData.text}

@@ -74,7 +74,7 @@ export const postComment = async (id: string, content: string, file?: File | nul
   const formdata = new FormData()
   formdata.append('content', JSON.stringify(content))
   if (invoiceFlag) {
-    formdata.append('invoice', JSON.stringify('inovice'));
+    formdata.append('invoice', JSON.stringify('invoice'));
   }
   if(file) formdata.append('reivew', file)
   
