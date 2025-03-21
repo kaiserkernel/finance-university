@@ -54,7 +54,8 @@ export default function RequestTable({ }: Props) {
 
   const handleAccept = async (id: string, prevState?: string) => {
     try {
-      if (prevState === 'reviewed' && userInfo.role !== "finance") {
+      // if (prevState === 'reviewed' && userInfo.role !== "finance") {
+      if (prevState === 'reviewed') {
         await reviewRequest(id);
         toast.success("Application approved");
       } else {

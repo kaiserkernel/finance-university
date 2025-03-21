@@ -334,7 +334,7 @@ export function UserTableRow({
 							justifyContent: "flex-end"
 						}}
 					>
-						{user?.role != "user" && (row[user?.role] == "pending" || prevState === 'reviewed' || row.reviewer_1.status == "pending" || row.reviewer_2.status == "pending") && (
+						{user?.role != "user" && row[user?.role] !== "reviewed" && (row[user?.role] == "pending" || prevState === 'reviewed' || row.reviewer_1.status == "pending" || row.reviewer_2.status == "pending") && (
 							<>
 								<Button
 									onClick={handleAcceptClick}
@@ -344,7 +344,7 @@ export function UserTableRow({
 									variant="outlined"
 								>
 									<Iconify icon="solar:check-circle-broken" />
-									Accept {(prevState === 'reviewed' && user.role !== 'finance') && `Settlement`}
+									Accept {(prevState === 'reviewed') && `Settlement`}
 								</Button>
 
 								{
